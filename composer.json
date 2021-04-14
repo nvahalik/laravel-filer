@@ -1,0 +1,46 @@
+{
+    "name": "nvahalik/laravel-filer",
+    "type": "library",
+    "description": "An advanced wrapper over Flysystem for Laravel.",
+    "authors": [
+        {
+            "name": "Nick Vahalik",
+            "email": "nick@nickvahalik.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "illuminate/database": "^8.2",
+        "illuminate/support": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nvahalik\\Filer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "@phpunit"
+        ],
+        "phpunit": "phpunit --verbose"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nvahalik\\Filer\\FilerServiceProvider"
+            ],
+            "aliases": {
+                "Filer": "Nvahalik\\Filer\\Facade"
+            }
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "orchestra/testbench": "^6.17"
+    }
+}
