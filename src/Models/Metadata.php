@@ -43,5 +43,4 @@ class Metadata extends Model
 
         $this->setConnection(config('filer.database.connection'));
     }
-
 }
