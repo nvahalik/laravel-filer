@@ -12,18 +12,8 @@ class Metadata extends Model
 
     protected $table = 'filer_metadata';
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
     public $incrementing = false;
 
-    /**
-     * The "type" of the auto-incrementing ID.
-     *
-     * @var string
-     */
     protected $keyType = 'uuid';
 
     protected $fillable = [
@@ -39,8 +29,8 @@ class Metadata extends Model
     ];
 
     protected $casts = [
-        'size' => 'integer',
-        'backing_data' => BackingData::class
+        'size'         => 'integer',
+        'backing_data' => BackingData::class,
     ];
 
     protected $dates = [

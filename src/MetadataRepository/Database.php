@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Metadata;
-use Ramsey\Uuid\Uuid;
 
 class Database extends Base implements MetadataRepository
 {
