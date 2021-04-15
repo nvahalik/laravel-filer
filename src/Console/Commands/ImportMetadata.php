@@ -100,6 +100,7 @@ class ImportMetadata extends Command
     {
         $matches = [];
         preg_match_all('#^(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\s+(\d+)\s+(\w+)\s+(\w+)\s+(.+)$#', $line, $matches);
+
         return array_slice($matches, 1);
     }
 
@@ -111,6 +112,7 @@ class ImportMetadata extends Command
             $path = str_replace($this->stripFromFilename, '', $path);
         }
         $disk = $this->diskName ?? $this->detectOriginalDisk($parsed[4]);
+
         return new Metadata(
             $path,
             MimeType::detectByFilename($path),
