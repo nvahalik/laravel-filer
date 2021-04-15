@@ -76,10 +76,10 @@ class ImportMetadata extends Command
         $this->stripFromFilename = $this->option('strip');
 
         $entries = File::lines($filename)
-            ->map(fn($line) => Arr::flatten($this->parseLine($line)))
+            ->map(fn ($line) => Arr::flatten($this->parseLine($line)))
             ->filter()
-            ->filter(fn($line) => $line[1] !== '0')
-            ->map(fn($parsed) => $this->generateMetadata($parsed));
+            ->filter(fn ($line) => $line[1] !== '0')
+            ->map(fn ($parsed) => $this->generateMetadata($parsed));
 
         foreach ($entries as $entry) {
             $this->repository->record($entry);
@@ -115,7 +115,7 @@ class ImportMetadata extends Command
         return new Metadata(
             $path,
             MimeType::detectByFilename($path),
-            (int)$parsed[1],
+            (int) $parsed[1],
             $parsed[2],
             Carbon::parse($parsed[0])->format('U'),
             $this->getVisibility($parsed[4]),
