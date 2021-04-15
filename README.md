@@ -56,3 +56,41 @@ of provided `backing_disks`.
 
 `backing_disks` allows you to define multiple flysystem disks to use. Want to use multiple S3-compatible adapters? You
 can.
+
+# Importing Metadata
+
+If you already have a ton of files on S3, you can use the `filer:import-s3-metadata` command to import that data into
+your metadata repository:
+
+```bash
+# Grab the existing contents.
+s3cmd ls s3://bucket-name -rl > s3output.txt
+
+# Import that data into the "example" storageId.
+php artisan filer:import-s3-metadata example s3output.txt
+```
+
+The importer uses `File::lines()` to load its data, and therefore should not consume a lot of memory. Additionally, it 
+will look at the bucket name in the URL which is present in the output and attempt to find that within your existing
+filesystems config.
+
+## Visibility
+
+By default, it will grab this from the filesystem configuration. If none is found nor provided with `--visibility`, it 
+will default to `private`.
+
+## Filename stripping
+
+You can strip a string from the filenames by specifying the `--strip` option.
+
+## Disk
+
+If you need to specify the disk directly or want to otherwise override it, just pass it in with `--disk`. This is not 
+checked, so don't mess it up.
+
+```bash
+php artisan filer:import-s3-metadata example s3output.txt --disk=some-disk --visibility=public --strip=prefix-dir/ 
+```
+
+The above command would strip `prefix-dir/` from the imported URLs, set their visibility to public, and mark their 
+default backing-disk to `some-disk`. 
