@@ -2,13 +2,17 @@
 
 namespace Nvahalik\Filer;
 
-use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
 use Nvahalik\Filer\AdapterStrategy\Factory;
+use Nvahalik\Filer\Console\Commands\ImportMetadata;
+use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Flysystem\FilerAdapter;
+use Nvahalik\Filer\MetadataRepository\Database;
 use Nvahalik\Filer\MetadataRepository\Json;
+use Nvahalik\Filer\MetadataRepository\Memory;
 
 class FilerServiceProvider extends ServiceProvider
 {
@@ -26,7 +30,7 @@ class FilerServiceProvider extends ServiceProvider
             __DIR__.'/../config/filer.php' => config_path('filer.php'),
         ], 'filer-config');
 
-        Storage::extend('filer', function ($app, $config) {
+        Storage::extend('filer', function (Application $app, $config, MetadataRepository $repository) {
             $backing_disks = array_combine($config['backing_disks'], array_map(function ($backing_disk) use ($app) {
                 return $app->make('filesystem')->disk($backing_disk);
             }, $config['backing_disks']));
@@ -52,7 +56,7 @@ class FilerServiceProvider extends ServiceProvider
             return new Filesystem(
                 new FilerAdapter(
                     $filerConfig,
-                    (new Json)->setStorageId($config['id']),
+                    $repository->setStorageId($config['id']),
                     $adapterStrategy
                 ),
                 $config
@@ -62,8 +66,17 @@ class FilerServiceProvider extends ServiceProvider
 
     public function register()
     {
-        /* @var $filesystem FilesystemManager */
-        $filesystem = $this->app->make('filesystem');
+        $this->app->singleton(MetadataRepository::class, function ($app, $config) {
+            switch ($app['config']['filer']['metadata']) {
+                case 'json':
+                    return new Json($app['config']['filer']['json']['storage_path']);
+                case 'database':
+                    return new Database($app['config']['filer']['database']['connection']);
+                case 'memory':
+                default:
+                    return new Memory();
+            }
+        });
     }
 
     /**
