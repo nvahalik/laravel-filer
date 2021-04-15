@@ -2,6 +2,7 @@
 
 namespace Nvahalik\Filer;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use League\Flysystem\Util;
@@ -31,12 +32,14 @@ class Metadata implements Arrayable, Jsonable
 
     public static function deserialize($array)
     {
+        $timestamp = Carbon::parse($array['timestamp'] ?? $array['updated_at'] ?? $array['created_at']);
+
         return new static(
             $array['path'],
             $array['mimetype'] ?? 'application/octet-stream',
             $array['size'],
             $array['etag'] ?? '',
-            $array['timestamp'] ?? $array['updated_at'] ?? $array['created_at'],
+            $timestamp->format('U'),
             $array['visibility'] ?? 'private',
             BackingData::unserialize($array['backing_data'] ?? [])
         );
