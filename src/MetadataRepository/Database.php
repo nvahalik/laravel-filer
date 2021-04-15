@@ -17,8 +17,7 @@ class Database extends Base implements MetadataRepository
 
     public function __construct(
         string $connection = null
-    )
-    {
+    ) {
         $this->connection = $connection ?? 'default';
     }
 

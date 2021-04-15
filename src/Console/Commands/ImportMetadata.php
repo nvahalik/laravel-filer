@@ -49,8 +49,7 @@ class ImportMetadata extends Command
      */
     public function __construct(
         MetadataRepository $repository
-    )
-    {
+    ) {
         $this->repository = $repository;
         parent::__construct();
     }
@@ -127,7 +126,7 @@ class ImportMetadata extends Command
     {
         $bucketName = array_slice(explode('/', $path), 2, 1)[0];
 
-        if (! isset ($this->buckets[$bucketName])) {
+        if (! isset($this->buckets[$bucketName])) {
             $disks = config('filesystems.disks');
 
             foreach ($disks as $name => $config) {

@@ -93,7 +93,7 @@ class FilerServiceProvider extends ServiceProvider
     private function registerCommand()
     {
         $this->commands([
-            ImportMetadata::class
+            ImportMetadata::class,
         ]);
     }
 }
