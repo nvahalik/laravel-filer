@@ -25,7 +25,16 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         $metadata = [];
 
         foreach ($this->originalDisks as $name => $adapter) {
-            $metadata[$name] = $adapter->getMetadata($path);
+            try {
+                $adapterMetadata = $adapter->getMetadata($path);
+                if (isset($adapterMetadata['etag'])) {
+                    $adapterMetadata['etag'] = rtrim(ltrim($adapterMetadata['etag'], '"'), '"');
+                }
+                $metadata[$name] = $adapterMetadata;
+
+            } catch (\Exception $exception) {
+                // Ignore any exceptions, at least for now.
+            }
         }
 
         return $metadata;
