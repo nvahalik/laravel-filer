@@ -11,6 +11,7 @@ class Factory
      * @param $backingDisks
      * @param $originalDisks
      * @param $options
+     *
      * @return Basic
      */
     public static function make($driver, $backingDisks, $originalDisks, $options)

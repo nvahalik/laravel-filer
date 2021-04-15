@@ -9,7 +9,6 @@ use Nvahalik\Filer\Contracts\AdapterStrategy;
 
 class Basic extends BaseAdapterStrategy implements AdapterStrategy
 {
-
     public function getWriteAdapters(): array
     {
         return $this->backingAdapters + $this->config['allow_new_files_on_original_disks'] ?
@@ -77,6 +76,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 // Ignore. We'll try the next one.
             }
         }
+
         return null;
     }
 
@@ -86,7 +86,6 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
             try {
                 return $adapter->readStream($this->readAdapterPath($id, $backingData));
             } catch (\Exception $e) {
-
             }
         }
 
@@ -97,6 +96,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
      * @param string $path
      * @param BackingData $backingData
      *  An array of backing data.
+     *
      * @return false | string
      */
     public function read(BackingData $backingData)
@@ -105,9 +105,9 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
             try {
                 return $adapter->read($this->readAdapterPath($id, $backingData));
             } catch (\Exception $e) {
-
             }
         }
+
         return false;
     }
 
@@ -118,7 +118,6 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         }, ARRAY_FILTER_USE_KEY);
     }
 
-
     public function delete(string $path, $backingData)
     {
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
@@ -126,7 +125,6 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 return $adapter->delete($this->readAdapterPath($id, $backingData));
             } catch (\Exception $e) {
                 return false;
-
             }
         }
 
@@ -152,6 +150,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     {
         try {
             $stream = $this->readStream($source);
+
             return $this->writeStream($destination, $stream);
         } catch (\Exception $e) {
             return null;

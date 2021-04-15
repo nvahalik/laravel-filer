@@ -7,15 +7,12 @@ use Illuminate\Contracts\Support\Jsonable;
 use League\Flysystem\Util;
 
 /**
- * Class MetadataRepository
+ * Class MetadataRepository.
  *
  * @property string path
- *
- * @package Nvahalik\Filer
  */
 class Metadata implements Arrayable, Jsonable
 {
-
     public string $path;
 
     public ?string $etag;
@@ -59,6 +56,7 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param string $path
+     *
      * @return Metadata
      */
     public function setPath(string $path): self
@@ -70,6 +68,7 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param mixed|string $filename
+     *
      * @return Metadata
      */
     public function setFilename(string $filename): self
@@ -81,6 +80,7 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param string|null $mimetype
+     *
      * @return Metadata
      */
     public function setMimetype(string $mimetype = null): self
@@ -92,6 +92,7 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param string $visibility
+     *
      * @return Metadata
      */
     public function setVisibility(string $visibility): self
@@ -103,6 +104,7 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param int $size
+     *
      * @return Metadata
      */
     public function setSize(int $size): self
@@ -114,6 +116,7 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param BackingData $backingData
+     *
      * @return Metadata
      */
     public function setBackingData(BackingData $backingData): self
@@ -135,8 +138,7 @@ class Metadata implements Arrayable, Jsonable
         int $timestamp = null,
         string $visibility = null,
         BackingData $backingData = null
-    )
-    {
+    ) {
         $this->path = $path;
         $this->mimetype = $mimetype;
         $this->size = $size;
@@ -154,7 +156,6 @@ class Metadata implements Arrayable, Jsonable
 
         return md5($data);
     }
-
 
     public static function generate($path, $contents): Metadata
     {
@@ -206,5 +207,4 @@ class Metadata implements Arrayable, Jsonable
     {
         // TODO: Implement toJson() method.
     }
-
 }

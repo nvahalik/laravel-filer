@@ -7,7 +7,6 @@ use Nvahalik\Filer\MetadataRepository\Json;
 
 class JsonTests extends MetadataBaseTestCase
 {
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -15,7 +14,6 @@ class JsonTests extends MetadataBaseTestCase
         $this->repository = new Json('test.json');
         $this->repository->setStorageId('test');
     }
-
 
     public function test_it_loads_existing_data_from_file()
     {
@@ -42,10 +40,10 @@ class JsonTests extends MetadataBaseTestCase
 
         $arrayData = $md->toArray();
 
-        $this->assertEquals($arrayData['path'], "example.txt");
-        $this->assertEquals($arrayData['etag'], "ce114e4501d2f4e2dcea3e17b546f339");
-        $this->assertEquals($arrayData['mimetype'], "text/plain");
-        $this->assertEquals($arrayData['visibility'], "private");
+        $this->assertEquals($arrayData['path'], 'example.txt');
+        $this->assertEquals($arrayData['etag'], 'ce114e4501d2f4e2dcea3e17b546f339');
+        $this->assertEquals($arrayData['mimetype'], 'text/plain');
+        $this->assertEquals($arrayData['visibility'], 'private');
         $this->assertEquals($arrayData['size'], 14);
         $this->assertIsObject($arrayData['backing_data']);
         $this->assertEquals($arrayData['timestamp'], 1618368967);

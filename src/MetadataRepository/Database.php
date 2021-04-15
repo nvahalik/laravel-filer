@@ -11,7 +11,6 @@ use Ramsey\Uuid\Uuid;
 
 class Database extends Base implements MetadataRepository
 {
-
     private string $tablePrefix;
 
     protected string $table = 'filer_metadata';
@@ -21,8 +20,7 @@ class Database extends Base implements MetadataRepository
     public function __construct(
         string $connection = null,
         string $tablePrefix = null
-    )
-    {
+    ) {
         $this->tablePrefix = $tablePrefix ?? '';
 
         $this->connection = $connection ?? 'default';
@@ -39,7 +37,7 @@ class Database extends Base implements MetadataRepository
     private function newQuery()
     {
         return DB::connection($this->connection)
-            ->table($this->tablePrefix . $this->table)
+            ->table($this->tablePrefix.$this->table)
             ->where('disk', '=', $this->storageId);
     }
 
@@ -80,7 +78,7 @@ class Database extends Base implements MetadataRepository
     public function getMetadata(string $path): ?Metadata
     {
         if ($metadata = $this->read($path)) {
-            $metadata = Metadata::deserialize((array)$metadata);
+            $metadata = Metadata::deserialize((array) $metadata);
         }
 
         return $metadata ?: null;
@@ -97,6 +95,7 @@ class Database extends Base implements MetadataRepository
             })->cursor()
             ->map(function ($record) {
                 $record->backing_data = BackingData::unserialize($record->backing_data);
+
                 return $record;
             });
     }
@@ -119,7 +118,7 @@ class Database extends Base implements MetadataRepository
     {
         $updatePayload = $metadata->serialize();
 
-        $updates = Arr::where(array_keys($updatePayload), fn($a) => $a !== 'path');
+        $updates = Arr::where(array_keys($updatePayload), fn ($a) => $a !== 'path');
 
         $updatePayload['disk'] = $this->storageId;
         $updatePayload['id'] = $updatePayload['id'] ?? Uuid::uuid4();

@@ -3,7 +3,6 @@
 namespace Nvahalik\Filer;
 
 use Illuminate\Filesystem\FilesystemAdapter;
-use Nvahalik\Filer\AdapterStrategy\AdapterManager;
 
 class Config
 {
@@ -24,8 +23,7 @@ class Config
         array $backingDisks,
         $adapterClass,
         $originalDisks = []
-    )
-    {
+    ) {
         if ($originalDisks && ! is_array($originalDisks)) {
             $originalDisks = [$originalDisks];
         }

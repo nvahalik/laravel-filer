@@ -8,7 +8,6 @@ use Nvahalik\Filer\Metadata;
 
 class Json extends Memory
 {
-
     private string $filename;
 
     public function __construct($filename = 'filer-adapter-data.json')

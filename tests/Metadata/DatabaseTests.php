@@ -16,5 +16,4 @@ class DatabaseTests extends MetadataBaseTestCase
         $this->repository = new Database('testbench');
         $this->repository->setStorageId('test');
     }
-
 }

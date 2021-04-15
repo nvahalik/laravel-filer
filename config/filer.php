@@ -11,7 +11,7 @@ return [
     ],
 
     'json' => [
-        'storage_path' => 'file-storage-metadata.json'
+        'storage_path' => 'file-storage-metadata.json',
     ],
 
 ];

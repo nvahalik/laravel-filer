@@ -19,15 +19,14 @@ class FilerServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__ . '/../database/migrations' => database_path('migrations'),
+            __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'filer-migrations');
 
         $this->publishes([
-            __DIR__ . '/../config/filer.php' => config_path('filer.php'),
+            __DIR__.'/../config/filer.php' => config_path('filer.php'),
         ], 'filer-config');
 
         Storage::extend('filer', function ($app, $config) {
-
             $backing_disks = array_combine($config['backing_disks'], array_map(function ($backing_disk) use ($app) {
                 return $app->make('filesystem')->disk($backing_disk);
             }, $config['backing_disks']));
@@ -74,6 +73,6 @@ class FilerServiceProvider extends ServiceProvider
      */
     protected function registerMigrations()
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 }

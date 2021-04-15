@@ -60,7 +60,7 @@ class Memory extends Base implements MetadataRepository
 
     public function listContents($directory = '', $recursive = false)
     {
-        $directory = ltrim(rtrim($directory, '/') . '/', '/');
+        $directory = ltrim(rtrim($directory, '/').'/', '/');
 
         $directoryOffset = strlen($directory);
 
@@ -69,6 +69,7 @@ class Memory extends Base implements MetadataRepository
         ) {
             $matchesPath = $directory === '' ? true : stripos($path, $directory) === 0;
             $hasTrailingDirectories = strpos($path, '/', $directoryOffset) === false;
+
             return $matchesPath && ($recursive ? true : $hasTrailingDirectories);
         });
 
@@ -76,8 +77,8 @@ class Memory extends Base implements MetadataRepository
 
         foreach ($matchingFiles as $file) {
             $contents[] = $this->data[$this->storageId] + [
-                    'path' => str_replace($directory, '', $file),
-                ];
+                'path' => str_replace($directory, '', $file),
+            ];
         }
 
         return $contents;

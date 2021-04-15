@@ -3,7 +3,6 @@
 namespace Tests\Metadata;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Storage;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Metadata;

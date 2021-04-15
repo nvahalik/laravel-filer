@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Nvahalik\Filer;
-
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -33,6 +31,7 @@ class BackingData implements Arrayable, Jsonable
     public function removeDisk($disk)
     {
         unset($this->data[$disk]);
+
         return $this;
     }
 
@@ -60,13 +59,15 @@ class BackingData implements Arrayable, Jsonable
         return $this->data;
     }
 
-    public static function diskAndPath($disk, $path) {
+    public static function diskAndPath($disk, $path)
+    {
         return (new static())->addDisk($disk, [
             'path' => $path,
         ]);
     }
 
-    public static function unserialize($data) {
+    public static function unserialize($data)
+    {
         if (is_string($data)) {
             $unserializedData = json_decode($data, true, 4);
         } else {
@@ -76,7 +77,8 @@ class BackingData implements Arrayable, Jsonable
         return (new static)->fill($unserializedData);
     }
 
-    public function toJson($options = 0) {
+    public function toJson($options = 0)
+    {
         return json_encode($this->toArray(), JSON_THROW_ON_ERROR | $options, 4);
     }
 }
