@@ -23,10 +23,10 @@ class CreateFilerTables extends Migration
             $table->enum('visibility', ['public', 'private'])->comment('Visibiilty of the file.');
             $table->json('backing_data')->comment('The information about where the file is stored and how.');
             $table->timestamp('timestamp')->useCurrent();
-            $table->primary([
+            $table->unique([
                 'disk', 'path',
             ]);
-            $table->unique('id');
+            $table->primary('id');
         });
     }
 

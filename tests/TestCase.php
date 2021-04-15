@@ -32,6 +32,9 @@ class TestCase extends BaseTestCase
         // Setup default database to use sqlite :memory:
         $app['config']->set('database.default', 'testbench');
 
+        $app['config']->set('filer.metadata', 'database');
+        $app['config']->set('filer.database.connection', 'testbench');
+
         $app['config']->set('database.connections.testbench', [
             'driver'   => 'sqlite',
             'database' => ':memory:',

@@ -2,8 +2,10 @@
 
 namespace Nvahalik\Filer\MetadataRepository;
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Metadata;
@@ -89,6 +91,7 @@ class Database extends Base implements MetadataRepository
                     ->where('path', 'NOT LIKE', "$directory%/%");
             })->cursor()
             ->map(function ($record) {
+                $record->timestamp = Carbon::parse($record->timestamp)->format('U');
                 $record->backing_data = BackingData::unserialize($record->backing_data);
 
                 return $record;
@@ -115,11 +118,12 @@ class Database extends Base implements MetadataRepository
 
         $updates = Arr::where(array_keys($updatePayload), fn ($a) => $a !== 'path');
 
+        $updatePayload['timestamp'] = Carbon::parse($updatePayload['timestamp'])->toDateTimeString();
         $updatePayload['disk'] = $this->storageId;
-        $updatePayload['id'] = $updatePayload['id'] ?? Uuid::uuid4();
+        $updatePayload['id'] = $updatePayload['id'] ?? Str::uuid();
 
         $this->newQuery()
-            ->upsert($updatePayload, ['path', 'disk'], $updates);
+            ->upsert($updatePayload, ['id'], $updates);
     }
 
     public function delete(string $path)
