@@ -20,6 +20,7 @@ class FilerServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->registerMigrations();
+            $this->registerCommand();
         }
 
         $this->publishes([
@@ -87,5 +88,12 @@ class FilerServiceProvider extends ServiceProvider
     protected function registerMigrations()
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+    }
+
+    private function registerCommand()
+    {
+        $this->commands([
+            ImportMetadata::class
+        ]);
     }
 }
