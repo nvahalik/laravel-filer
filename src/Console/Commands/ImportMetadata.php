@@ -45,7 +45,7 @@ class ImportMetadata extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param MetadataRepository $repository
      */
     public function __construct(
         MetadataRepository $repository
