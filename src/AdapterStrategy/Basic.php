@@ -54,7 +54,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     public function writeStream($path, $stream): ?BackingData
     {
         /**
-         * @var string $diskId
+         * @var string            $diskId
          * @var FilesystemAdapter $backingAdapter
          */
         foreach ($this->backingAdapters as $diskId => $backingAdapter) {
@@ -73,7 +73,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     public function write($path, $contents): ?BackingData
     {
         /**
-         * @var string $diskId
+         * @var string            $diskId
          * @var FilesystemAdapter $backingAdapter
          */
         foreach ($this->backingAdapters as $diskId => $backingAdapter) {
@@ -102,7 +102,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     }
 
     /**
-     * @param string $path
+     * @param string      $path
      * @param BackingData $backingData
      *  An array of backing data.
      *
