@@ -31,7 +31,7 @@ class FilerServiceProvider extends ServiceProvider
             __DIR__.'/../config/filer.php' => config_path('filer.php'),
         ], 'filer-config');
 
-        Storage::extend('filer', function (Application $app, $config, MetadataRepository $repository) {
+        Storage::extend('filer', function (Application $app, $config) {
             $backing_disks = array_combine($config['backing_disks'], array_map(function ($backing_disk) use ($app) {
                 return $app->make('filesystem')->disk($backing_disk);
             }, $config['backing_disks']));
@@ -57,7 +57,7 @@ class FilerServiceProvider extends ServiceProvider
             return new Filesystem(
                 new FilerAdapter(
                     $filerConfig,
-                    $repository->setStorageId($config['id']),
+                    $app->make(MetadataRepository::class)->setStorageId($config['id']),
                     $adapterStrategy
                 ),
                 $config
