@@ -11,18 +11,14 @@ use Ramsey\Uuid\Uuid;
 
 class Database extends Base implements MetadataRepository
 {
-    private string $tablePrefix;
-
     protected string $table = 'filer_metadata';
 
     private string $connection;
 
     public function __construct(
-        string $connection = null,
-        string $tablePrefix = null
-    ) {
-        $this->tablePrefix = $tablePrefix ?? '';
-
+        string $connection = null
+    )
+    {
         $this->connection = $connection ?? 'default';
     }
 
@@ -37,7 +33,7 @@ class Database extends Base implements MetadataRepository
     private function newQuery()
     {
         return DB::connection($this->connection)
-            ->table($this->tablePrefix.$this->table)
+            ->table($this->table)
             ->where('disk', '=', $this->storageId);
     }
 

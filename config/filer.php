@@ -7,7 +7,6 @@ return [
 
     'database' => [
         'connection' => env('DB_CONNECTION', 'mysql'),
-        'prefix' => 'filer_',
     ],
 
     'json' => [
