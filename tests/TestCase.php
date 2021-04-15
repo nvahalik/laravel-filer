@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Nvahalik\Filer\FilerServiceProvider;
 
 class TestCase extends BaseTestCase
 {
@@ -16,7 +17,7 @@ class TestCase extends BaseTestCase
     protected function getPackageProviders($app)
     {
         return [
-            'Nvahalik\Filer\FilerServiceProvider',
+            FilerServiceProvider::class,
         ];
     }
 
