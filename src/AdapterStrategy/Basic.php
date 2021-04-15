@@ -31,7 +31,6 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                     $adapterMetadata['etag'] = rtrim(ltrim($adapterMetadata['etag'], '"'), '"');
                 }
                 $metadata[$name] = $adapterMetadata;
-
             } catch (\Exception $exception) {
                 // Ignore any exceptions, at least for now.
             }
