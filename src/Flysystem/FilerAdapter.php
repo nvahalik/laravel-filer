@@ -71,7 +71,7 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
     public function update($path, $contents, Config $config, $isStream = false)
     {
         // Figure out where the data actually is...
-        $metadata = $this->getMetadata($path);
+        $metadata = $this->pathMetadata($path);
 
         // Update it.
         $backingData = $isStream
@@ -110,7 +110,7 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
     public function copy($originalPath, $newPath)
     {
         // Grab a copy of the metadata and save it with the new path information.
-        $originalMetadata = $this->getStorageMetadata()->getMetadata($originalPath);
+        $originalMetadata = $this->pathMetadata($originalPath);
 
         if (! $originalMetadata) {
             return false;
@@ -142,7 +142,7 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
     public function delete($path)
     {
         // Grab a copy of the metadata and save it with the new path information.
-        $metadata = $this->getStorageMetadata()->getMetadata($path);
+        $metadata = $this->pathMetadata($path);
 
         try {
             // Copy the file.
@@ -196,13 +196,7 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
     public function read($path)
     {
         // Get the metadata. Where is this file?
-        $metadata = $this->storageMetadata->getMetadata($path);
-
-        // We didn't find it in the metadata store. Is there an original disk?
-        // If so, let's reach out to the disk and see if there is data there.
-        if (! $metadata && $this->config->originalDisks) {
-            $metadata = $this->migrateFromOriginalDisk($path);
-        }
+        $metadata = $this->pathMetadata($path);
 
         if ($contents = $this->adapterManager->read($metadata->backingData)) {
             return ['type' => 'file', 'path' => $path, 'contents' => $contents];
@@ -212,9 +206,12 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
     }
 
     /**
-     * @inheritDoc
+     * Grab the metadata from the store. If it isn't there, try it from the original disks, if they are set.
+     *
+     * @param $path
+     * @return Metadata
      */
-    public function readStream($path)
+    protected function pathMetadata($path): Metadata
     {
         // Get the metadata. Where is this file?
         $metadata = $this->storageMetadata->getMetadata($path);
@@ -224,6 +221,17 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
         if (! $metadata && $this->config->originalDisks) {
             $metadata = $this->migrateFromOriginalDisk($path);
         }
+
+        return $metadata;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function readStream($path)
+    {
+        // Get the metadata. Where is this file?
+        $metadata = $this->pathMetadata($path);
 
         if ($stream = $this->adapterManager->readStream($metadata->backingData)) {
             return ['type' => 'file', 'path' => $path, 'stream' => $stream];
@@ -247,7 +255,7 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
     public function getMetadata($path, $asObject = false)
     {
         // Convert our metadata to an array.
-        $metadata = $this->storageMetadata->getMetadata($path);
+        $metadata = $this->pathMetadata($path);
 
         if ($metadata) {
             return $asObject ? $metadata : $metadata->toArray();
