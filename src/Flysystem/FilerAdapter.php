@@ -13,7 +13,6 @@ use Nvahalik\Filer\Metadata;
 
 class FilerAdapter implements AdapterInterface, CanOverwriteFiles
 {
-
     protected FilerConfig $config;
 
     protected MetadataRepository $storageMetadata;
@@ -24,8 +23,7 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
         FilerConfig $config,
         MetadataRepository $storageMetadata,
         AdapterStrategy $adapterManager
-    )
-    {
+    ) {
         $this->config = $config;
         $this->storageMetadata = $storageMetadata;
         $this->adapterManager = $adapterManager;

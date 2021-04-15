@@ -1,14 +1,11 @@
 <?php
 
-
 namespace Nvahalik\Filer\MetadataRepository;
-
 
 use Nvahalik\Filer\Contracts\MetadataRepository;
 
 class Base
 {
-
     protected string $storageId;
 
     public function setStorageId(string $id): MetadataRepository
@@ -26,5 +23,4 @@ class Base
 
         return false;
     }
-
 }

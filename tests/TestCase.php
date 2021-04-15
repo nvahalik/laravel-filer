@@ -24,6 +24,7 @@ class TestCase extends BaseTestCase
      * Define environment setup.
      *
      * @param  \Illuminate\Foundation\Application  $app
+     *
      * @return void
      */
     protected function defineEnvironment($app)
@@ -37,5 +38,4 @@ class TestCase extends BaseTestCase
             'prefix'   => '',
         ]);
     }
-
 }

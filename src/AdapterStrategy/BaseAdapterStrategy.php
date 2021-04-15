@@ -4,7 +4,6 @@ namespace Nvahalik\Filer\AdapterStrategy;
 
 class BaseAdapterStrategy
 {
-
     protected array $backingAdapters;
     protected array $originalDisks;
     protected array $options;
@@ -15,8 +14,7 @@ class BaseAdapterStrategy
         array $options = [
             'allow_new_files_on_original_disks' => false,
         ]
-    )
-    {
+    ) {
         $this->backingAdapters = $backingAdapters;
         $this->originalDisks = $originalDisks;
         $this->options = $options;
