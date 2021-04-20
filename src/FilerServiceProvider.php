@@ -23,6 +23,10 @@ class FilerServiceProvider extends ServiceProvider
             $this->registerCommand();
         }
 
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/filer.php', 'filer'
+        );
+
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'filer-migrations');
