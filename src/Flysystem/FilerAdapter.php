@@ -41,17 +41,18 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
     public function write($path, $contents, Config $config, $isStream = false)
     {
         // Create the initial entry.
-        $this->storageMetadata->record(Metadata::generate($path, $contents));
-
         $backingData = $isStream
             ? $this->adapterManager->writeStream($path, $contents)
             : $this->adapterManager->write($path, $contents);
 
         // Write the data out somewhere.
         if ($backingData) {
+            $metadata = Metadata::generate($path, $contents);
+            $metadata->setBackingData($backingData);
+
             // Update the entry to ensure that we've recorded what actually happened with the data.
             return $this->storageMetadata
-                ->setBackingData($path, $backingData)
+                ->record($metadata)
                 ->getMetadata($path);
         }
 
