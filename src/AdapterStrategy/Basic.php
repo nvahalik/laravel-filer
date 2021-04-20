@@ -133,7 +133,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
             try {
                 return $adapter->delete($this->readAdapterPath($id, $backingData));
             } catch (\Exception $e) {
-                return false;
+                throw new BackingAdapterException("Unable to delete ($path) on disk ($id).");
             }
         }
 
