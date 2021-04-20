@@ -327,4 +327,25 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
 
         return false;
     }
+
+    public function getTemporaryUrl(string $path, $expiration, array $options = [])
+    {
+        $data = $this->getBackingAdapter($path);
+        $adapter = $data['adapter'];
+
+        return $adapter->temporaryUrl($path, $expiration, $options);
+    }
+
+    public function getBackingAdapter(string $path)
+    {
+        $metadata = $this->pathMetadata($path)->backingData->toArray();
+
+        $disk = key($metadata);
+
+        return [
+            'disk'     => $disk,
+            'adapter'  => $this->adapterManager->getDisk($disk),
+            'metadata' => current($metadata),
+        ];
+    }
 }

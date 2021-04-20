@@ -6,6 +6,7 @@ use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
+use Nvahalik\Filer\Exceptions\BackingAdapterException;
 
 class Basic extends BaseAdapterStrategy implements AdapterStrategy
 {
@@ -163,5 +164,17 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    public function getDisk(string $disk)
+    {
+        $adapters = $this->getReadAdapters();
+
+        if (! array_key_exists($disk, $adapters)) {
+            throw new BackingAdapterException(sprintf('The backing adapter (%s) does not exist on the adapter.',
+                $disk));
+        }
+
+        return $adapters[$disk];
     }
 }

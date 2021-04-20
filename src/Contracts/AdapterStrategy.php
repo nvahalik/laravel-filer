@@ -12,6 +12,8 @@ interface AdapterStrategy
 
     public function setOriginalDisks(array $originalDisks);
 
+    public function getDisk(string $disk);
+
     public function writeStream($path, $stream): ?BackingData;
 
     public function write($path, $contents): ?BackingData;
