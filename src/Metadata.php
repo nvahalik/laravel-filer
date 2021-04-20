@@ -14,6 +14,8 @@ use League\Flysystem\Util;
  */
 class Metadata implements Arrayable, Jsonable
 {
+    public ?string $id;
+
     public string $path;
 
     public ?string $etag;
@@ -41,7 +43,8 @@ class Metadata implements Arrayable, Jsonable
             $array['etag'] ?? '',
             $timestamp->format('U'),
             $array['visibility'] ?? 'private',
-            BackingData::unserialize($array['backing_data'] ?? [])
+            BackingData::unserialize($array['backing_data'] ?? []),
+            $array['id'] ?? null
         );
     }
 
@@ -53,7 +56,8 @@ class Metadata implements Arrayable, Jsonable
             $array['size'],
             $array['etag'] ?? '',
             $array['timestamp'] ?? $array['updated_at'] ?? $array['created_at'],
-            $array['visibility'] ?? 'private'
+            $array['visibility'] ?? 'private',
+            $array['id'] ?? null
         );
     }
 
@@ -124,6 +128,13 @@ class Metadata implements Arrayable, Jsonable
         return $this;
     }
 
+    public function setId(string $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     /**
      * @param BackingData $backingData
      *
@@ -147,7 +158,8 @@ class Metadata implements Arrayable, Jsonable
         string $etag = null,
         int $timestamp = null,
         string $visibility = null,
-        BackingData $backingData = null
+        BackingData $backingData = null,
+        string $id = null
     ) {
         $this->path = $path;
         $this->mimetype = $mimetype;
@@ -158,6 +170,7 @@ class Metadata implements Arrayable, Jsonable
         $this->created_at = $timestamp ?? time();
         $this->updated_at = $timestamp ?? time();
         $this->timestamp = $timestamp ?? time();
+        $this->id = $id;
     }
 
     public static function generateEtag($content)
@@ -184,6 +197,7 @@ class Metadata implements Arrayable, Jsonable
     public function toArray(): array
     {
         return [
+            'id' => $this->id,
             'path' => $this->path,
             'etag' => $this->etag,
             'mimetype' => $this->mimetype,
