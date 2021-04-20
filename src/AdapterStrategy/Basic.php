@@ -147,12 +147,28 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
 
     public function update($path, $contents, $backingData): BackingData
     {
-        // TODO: Implement update() method.
+        foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
+            try {
+                $adapter->update($this->readAdapterPath($id, $backingData), $contents);
+            } catch (\Exception $e) {
+                throw new BackingAdapterException('Unable to write to remote adapter: '.$id.' path ('.$path.')');
+            }
+        }
+
+        return $backingData;
     }
 
     public function updateStream($path, $stream, $backingData): BackingData
     {
-        // TODO: Implement updateStream() method.
+        foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
+            try {
+                $adapter->updateStream($this->readAdapterPath($id, $backingData), $contents);
+            } catch (\Exception $e) {
+                throw new BackingAdapterException('Unable to write to remote adapter: '.$id.' path ('.$path.')');
+            }
+        }
+
+        return $backingData;
     }
 
     public function copy(BackingData $source, string $destination): ?BackingData

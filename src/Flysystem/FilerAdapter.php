@@ -9,6 +9,7 @@ use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
 use Nvahalik\Filer\Contracts\MetadataRepository;
+use Nvahalik\Filer\Exceptions\BackingAdapterException;
 use Nvahalik\Filer\Metadata;
 
 class FilerAdapter implements AdapterInterface, CanOverwriteFiles
@@ -49,9 +50,9 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
         // Write the data out somewhere.
         if ($backingData) {
             // Update the entry to ensure that we've recorded what actually happened with the data.
-            $this->storageMetadata->setBackingData($path, $backingData);
-
-            return true;
+            return $this->storageMetadata
+                ->setBackingData($path, $backingData)
+                ->getMetadata($path);
         }
 
         return false;
@@ -74,15 +75,21 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
         $metadata = $this->pathMetadata($path);
 
         // Update it.
-        $backingData = $isStream
-            ? $this->adapterManager->updateStream($path, $contents, $metadata->backingData)
-            : $this->adapterManager->update($path, $contents, $metadata->backingData);
+        try {
+            $backingData = $isStream
+                ? $this->adapterManager->updateStream($path, $contents, $metadata->backingData)
+                : $this->adapterManager->update($path, $contents, $metadata->backingData);
 
-        $metadata->updateContents($contents)
-            ->setBackingData($backingData);
+            $metadata->updateContents($contents)
+                ->setBackingData($backingData);
 
-        // Update metadata with new size and timestamp?
-        $this->storageMetadata->record($metadata);
+            // Update metadata with new size and timestamp?
+            $this->storageMetadata->record($metadata);
+
+            return $metadata->toArray();
+        } catch (BackingAdapterException $e) {
+            return false;
+        }
     }
 
     /**
@@ -148,7 +155,7 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
             // Copy the file.
             $this->adapterManager->delete($path, $metadata->backingData);
             $this->storageMetadata->delete($path);
-        } catch (\Exception $e) {
+        } catch (BackingAdapterException $e) {
             return false;
         }
 

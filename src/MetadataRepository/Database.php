@@ -109,9 +109,11 @@ class Database extends Base implements MetadataRepository
         $this->newQuery()
             ->where('path', '=', $path)
             ->update(['visibility' => $visibility]);
+
+        return $this;
     }
 
-    public function record(Metadata $metadata)
+    public function record(Metadata $metadata): Metadata
     {
         $updatePayload = $metadata->serialize();
 
@@ -123,6 +125,8 @@ class Database extends Base implements MetadataRepository
 
         $this->newQuery()
             ->upsert($updatePayload, ['id'], $updates);
+
+        return $metadata;
     }
 
     public function delete(string $path)
@@ -130,6 +134,8 @@ class Database extends Base implements MetadataRepository
         $this->newQuery()
             ->where('path', '=', $path)
             ->delete();
+
+        return $this;
     }
 
     public function setBackingData(string $path, BackingData $backingData)
@@ -137,6 +143,8 @@ class Database extends Base implements MetadataRepository
         $this->newQuery()
             ->where('path', '=', $path)
             ->update(['backing_data' => $backingData->toJson()]);
+
+        return $this;
     }
 
     public function rename(string $oldPath, string $newPath)
@@ -144,5 +152,7 @@ class Database extends Base implements MetadataRepository
         $this->newQuery()
             ->where('path', '=', $oldPath)
             ->update(['path' => $newPath]);
+
+        return $this;
     }
 }

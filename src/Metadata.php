@@ -69,6 +69,13 @@ class Metadata implements Arrayable, Jsonable
         return $this;
     }
 
+    public function setTimestamp(int $timestamp): self
+    {
+        $this->timestamp = $timestamp;
+
+        return $this;
+    }
+
     /**
      * @param mixed|string $filename
      *
