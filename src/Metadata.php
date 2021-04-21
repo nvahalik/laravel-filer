@@ -175,7 +175,7 @@ class Metadata implements Arrayable, Jsonable
 
     public static function generateEtag($content)
     {
-        $data = is_resource($content) ? stream_with_contents($content) : $content;
+        $data = is_resource($content) ? stream_get_contents($content) : $content;
 
         return md5($data);
     }
