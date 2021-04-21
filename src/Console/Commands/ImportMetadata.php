@@ -43,24 +43,14 @@ class ImportMetadata extends Command
     private MetadataRepository $repository;
 
     /**
-     * Create a new command instance.
-     *
-     * @param MetadataRepository $repository
-     */
-    public function __construct(
-        MetadataRepository $repository
-    ) {
-        $this->repository = $repository;
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return int
      */
     public function handle()
     {
+        $this->repository = app(MetadataRepository::class);
+
         $filename = $this->ensureFile($this->argument('file'));
         $storageId = $this->argument('storageId');
 
