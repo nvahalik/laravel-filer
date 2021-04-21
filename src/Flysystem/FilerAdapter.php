@@ -51,9 +51,9 @@ class FilerAdapter implements AdapterInterface, CanOverwriteFiles
             $metadata->setBackingData($backingData);
 
             // Update the entry to ensure that we've recorded what actually happened with the data.
-            return $this->storageMetadata
-                ->record($metadata)
-                ->getMetadata($path);
+            $this->storageMetadata->record($metadata);
+
+            return $this->storageMetadata->getMetadata($path);
         }
 
         return false;
