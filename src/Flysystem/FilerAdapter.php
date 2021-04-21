@@ -2,7 +2,6 @@
 
 namespace Nvahalik\Filer\Flysystem;
 
-use League\Flysystem\Adapter\CanOverwriteFiles;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
 use Nvahalik\Filer\BackingData;
@@ -12,7 +11,7 @@ use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Exceptions\BackingAdapterException;
 use Nvahalik\Filer\Metadata;
 
-class FilerAdapter implements AdapterInterface, CanOverwriteFiles
+class FilerAdapter implements AdapterInterface
 {
     protected FilerConfig $config;
 
