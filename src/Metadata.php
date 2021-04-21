@@ -183,7 +183,13 @@ class Metadata implements Arrayable, Jsonable
     public static function generate($path, $contents): Metadata
     {
         $mimetype = Util::guessMimeType($path, $contents);
-        $size = Util::contentSize($contents);
+        if (is_resource($contents)) {
+            $size = Util::contentSize(stream_get_contents($contents));
+            rewind($contents);
+        } else {
+            $size = Util::contentSize($contents);
+        }
+
         $etag = static::generateEtag($contents);
 
         return new static(
@@ -197,14 +203,14 @@ class Metadata implements Arrayable, Jsonable
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'path' => $this->path,
-            'etag' => $this->etag,
-            'mimetype' => $this->mimetype,
-            'visibility' => $this->visibility,
-            'size' => $this->size,
+            'id'           => $this->id,
+            'path'         => $this->path,
+            'etag'         => $this->etag,
+            'mimetype'     => $this->mimetype,
+            'visibility'   => $this->visibility,
+            'size'         => $this->size,
             'backing_data' => $this->backingData,
-            'timestamp' => $this->timestamp,
+            'timestamp'    => $this->timestamp,
         ];
     }
 
@@ -220,7 +226,12 @@ class Metadata implements Arrayable, Jsonable
     public function updateContents($contents)
     {
         $this->mimetype = Util::guessMimeType($this->path, $contents);
-        $this->size = Util::contentSize($contents);
+        if (is_resource($contents)) {
+            $this->size = Util::contentSize(stream_get_contents($contents));
+            rewind($contents);
+        } else {
+            $this->size = Util::contentSize($contents);
+        }
         $this->etag = $this->generateEtag($contents);
         $this->updated_at = time();
 
