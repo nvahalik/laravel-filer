@@ -4,6 +4,7 @@ namespace Nvahalik\Filer\Flysystem;
 
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
+use League\Flysystem\Util;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
@@ -44,6 +45,10 @@ class FilerAdapter implements AdapterInterface
             ? $this->adapterManager->writeStream($path, $contents, $config)
             : $this->adapterManager->write($path, $contents, $config);
 
+        if ($isStream) {
+            Util::rewindStream($contents);
+        }
+
         // Write the data out somewhere.
         if ($backingData) {
             $metadata = Metadata::generate($path, $contents);
@@ -79,6 +84,10 @@ class FilerAdapter implements AdapterInterface
             $backingData = $isStream
                 ? $this->adapterManager->updateStream($path, $contents, $config, $metadata->backingData)
                 : $this->adapterManager->update($path, $contents, $config, $metadata->backingData);
+
+            if ($isStream) {
+                Util::rewindStream($contents);
+            }
 
             $metadata->updateContents($contents)
                 ->setBackingData($backingData);
