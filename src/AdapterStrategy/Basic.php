@@ -22,7 +22,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         return array_merge($this->backingAdapters, $this->originalDisks);
     }
 
-    public function getOriginalDiskMetadata($path, $backingData = null)
+    public function getOriginalDiskMetadata($path)
     {
         $metadata = [];
 
