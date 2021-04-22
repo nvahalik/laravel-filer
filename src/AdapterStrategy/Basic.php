@@ -63,7 +63,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 $originalConfig = $backingAdapter->getConfig();
                 $originalConfig->setFallback($config);
 
-                if ($backingAdapter->writeStream($path, $stream, $originalConfig)) {
+                if ($backingAdapter->getAdapter()->writeStream($path, $stream, $originalConfig)) {
                     return BackingData::diskAndPath($diskId, $path);
                 }
             } catch (FileExistsException $e) {
