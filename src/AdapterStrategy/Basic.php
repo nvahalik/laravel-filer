@@ -4,6 +4,7 @@ namespace Nvahalik\Filer\AdapterStrategy;
 
 use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Filesystem\FilesystemAdapter;
+use League\Flysystem\Config;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
 use Nvahalik\Filer\Exceptions\BackingAdapterException;
@@ -51,7 +52,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         return false;
     }
 
-    public function writeStream($path, $stream): ?BackingData
+    public function writeStream($path, $stream, Config $config): ?BackingData
     {
         /**
          * @var string            $diskId
@@ -59,7 +60,10 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
          */
         foreach ($this->backingAdapters as $diskId => $backingAdapter) {
             try {
-                if ($backingAdapter->writeStream($path, $stream)) {
+                $originalConfig = $backingAdapter->getConfig();
+                $originalConfig->setFallback($config);
+
+                if ($backingAdapter->writeStream($path, $stream, $originalConfig)) {
                     return BackingData::diskAndPath($diskId, $path);
                 }
             } catch (FileExistsException $e) {
@@ -70,7 +74,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         return null;
     }
 
-    public function write($path, $contents): ?BackingData
+    public function write($path, $contents, Config $config): ?BackingData
     {
         /**
          * @var string            $diskId
@@ -78,7 +82,10 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
          */
         foreach ($this->backingAdapters as $diskId => $backingAdapter) {
             try {
-                if ($backingAdapter->write($path, $contents)) {
+                $originalConfig = $backingAdapter->getConfig();
+                $originalConfig->setFallback($config);
+
+                if ($backingAdapter->getAdapter()->write($path, $contents, $originalConfig)) {
                     return BackingData::diskAndPath($diskId, $path);
                 }
             } catch (FileExistsException $e) {
@@ -93,7 +100,9 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     {
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
             try {
-                return $adapter->readStream($this->readAdapterPath($id, $backingData));
+                if ($object = $adapter->getAdapter()->readStream($this->readAdapterPath($id, $backingData))) {
+                    return $object['stream'];
+                }
             } catch (\Exception $e) {
             }
         }
@@ -112,7 +121,9 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     {
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
             try {
-                return $adapter->read($this->readAdapterPath($id, $backingData));
+                if ($response = $adapter->getAdapter()->read($this->readAdapterPath($id, $backingData))) {
+                    return $response['contents'];
+                }
             } catch (\Exception $e) {
             }
         }
@@ -131,7 +142,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     {
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
             try {
-                return $adapter->delete($this->readAdapterPath($id, $backingData));
+                return $adapter->getAdapter()->delete($this->readAdapterPath($id, $backingData));
             } catch (\Exception $e) {
                 throw new BackingAdapterException("Unable to delete ($path) on disk ($id).");
             }
@@ -145,11 +156,14 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         return $backingData->getDisk($id)['path'];
     }
 
-    public function update($path, $contents, $backingData): BackingData
+    public function update($path, $contents, Config $config, $backingData): BackingData
     {
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
             try {
-                $adapter->update($this->readAdapterPath($id, $backingData), $contents);
+                $originalConfig = $adapter->getConfig();
+                $originalConfig->setFallback($config);
+
+                $adapter->getAdapter()->update($this->readAdapterPath($id, $backingData), $contents, $originalConfig);
             } catch (\Exception $e) {
                 throw new BackingAdapterException('Unable to write to remote adapter: '.$id.' path ('.$path.')');
             }
@@ -158,11 +172,14 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         return $backingData;
     }
 
-    public function updateStream($path, $stream, $backingData): BackingData
+    public function updateStream($path, $stream, Config $config, $backingData): BackingData
     {
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
             try {
-                $adapter->updateStream($this->readAdapterPath($id, $backingData), $stream);
+                $originalConfig = $adapter->getConfig();
+                $originalConfig->setFallback($config);
+
+                $adapter->getAdapter()->updateStream($this->readAdapterPath($id, $backingData), $stream, $originalConfig);
             } catch (\Exception $e) {
                 throw new BackingAdapterException('Unable to write to remote adapter: '.$id.' path ('.$path.')');
             }

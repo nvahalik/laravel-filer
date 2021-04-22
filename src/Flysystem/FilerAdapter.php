@@ -41,8 +41,8 @@ class FilerAdapter implements AdapterInterface
     {
         // Create the initial entry.
         $backingData = $isStream
-            ? $this->adapterManager->writeStream($path, $contents)
-            : $this->adapterManager->write($path, $contents);
+            ? $this->adapterManager->writeStream($path, $contents, $config)
+            : $this->adapterManager->write($path, $contents, $config);
 
         // Write the data out somewhere.
         if ($backingData) {
@@ -77,8 +77,8 @@ class FilerAdapter implements AdapterInterface
         // Update it.
         try {
             $backingData = $isStream
-                ? $this->adapterManager->updateStream($path, $contents, $metadata->backingData)
-                : $this->adapterManager->update($path, $contents, $metadata->backingData);
+                ? $this->adapterManager->updateStream($path, $contents, $config, $metadata->backingData)
+                : $this->adapterManager->update($path, $contents, $config, $metadata->backingData);
 
             $metadata->updateContents($contents)
                 ->setBackingData($backingData);

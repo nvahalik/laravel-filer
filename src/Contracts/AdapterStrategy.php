@@ -2,6 +2,7 @@
 
 namespace Nvahalik\Filer\Contracts;
 
+use League\Flysystem\Config;
 use Nvahalik\Filer\BackingData;
 
 interface AdapterStrategy
@@ -14,17 +15,17 @@ interface AdapterStrategy
 
     public function getDisk(string $disk);
 
-    public function writeStream($path, $stream): ?BackingData;
+    public function writeStream($path, $stream, Config $config): ?BackingData;
 
-    public function write($path, $contents): ?BackingData;
+    public function write($path, $contents, Config $config): ?BackingData;
 
     public function readStream(BackingData $backingData);
 
     public function read(BackingData $backingData);
 
-    public function update($path, $contents, $backingData): ?BackingData;
+    public function update($path, $contents, Config $config, $backingData): ?BackingData;
 
-    public function updateStream($path, $stream, $backingData): ?BackingData;
+    public function updateStream($path, $stream, Config $config, $backingData): ?BackingData;
 
     public function delete(string $path, $backingData);
 
