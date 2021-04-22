@@ -111,7 +111,6 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     }
 
     /**
-     * @param string      $path
      * @param BackingData $backingData
      *  An array of backing data.
      *
