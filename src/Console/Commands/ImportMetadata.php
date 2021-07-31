@@ -89,7 +89,8 @@ class ImportMetadata extends Command
     private function parseLine($line)
     {
         $matches = [];
-        preg_match_all('#^(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\s+(\d+)\s+(\w+)\s+(\w+)\s+(.+)$#', $line, $matches);
+        preg_match_all('#^(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\s+(\d+)\s+([\w-]+)\s+(\w+)\s+(.+)$#', $line, $matches);
+        //                         Date- YYYY-MM-DD  Time HH:MM    ^Size^   ^Etag^    ^Vis^ ^Path^
 
         return array_slice($matches, 1);
     }
