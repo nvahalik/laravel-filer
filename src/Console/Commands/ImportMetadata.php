@@ -18,13 +18,15 @@ class ImportMetadata extends Command
      *
      * @var string
      */
-    protected $signature = 'filer:import-s3-metadata
-            {storageId : The disk/storageId to import the data into.}  
+    protected $signature = "filer:import-s3-metadata
+            {storageId : The storageId to import the data into. The is the 'id' within your disk configuration.}  
             {file : The output from `s3cmd ls -lr` to import.}
+            {--mode=ignore : Action to take if the file already exists. append backing store data, overwrite it, ignore - skip it.}
             {--disk= : The name of the backing disk the imports belong to. Default will auto-detect.}
-            {--visibility= : Visibility for all files. Default will auto-detect and fallback to private.}
+            {--visibility= : Visibility for all files. Default will auto-detect with a fallback to private.}
             {--strip= : The file prefix to strip.}
-    ';
+            {--P|progress : Show progress.}
+    ";
 
     /**
      * The console command description.
@@ -53,9 +55,16 @@ class ImportMetadata extends Command
 
         $filename = $this->ensureFile($this->argument('file'));
         $storageId = $this->argument('storageId');
+        $mode = $this->option('mode');
 
         if (! $filename) {
             return 0;
+        }
+
+        if ($this->option('progress')) {
+            $bar = $this->output->createProgressBar();
+            $bar->setFormat('verbose_nomax');
+            $bar->start();
         }
 
         $this->repository->setStorageId($storageId);
@@ -70,8 +79,33 @@ class ImportMetadata extends Command
             ->filter(fn ($line) => $line[1] !== '0')
             ->map(fn ($parsed) => $this->generateMetadata($parsed));
 
+        /** @var Metadata $entry */
         foreach ($entries as $entry) {
-            $this->repository->record($entry);
+            if ($this->repository->has($entry->path)) {
+                if ($mode === 'ignore') {
+                    continue;
+                } else if ($mode === 'overwrite') {
+                    $existingEntry = $this->repository->getMetadata();
+                    $existingEntry->setBackingData($entry->backingData);
+                    $this->repository->record($existingEntry);
+                } else if ($mode === 'append') {
+                    $existingEntry = $this->repository->getMetadata($entry->path);
+                    $this->appendBackingData($existingEntry, $entry);
+                    $this->repository->record($existingEntry);
+                }
+            } else {
+                $this->repository->record($entry);
+            }
+
+            $entry = null;
+
+            if ($bar) {
+                $bar->advance();
+            }
+        }
+
+        if ($bar) {
+            $bar->finish();
         }
 
         return 0;
@@ -141,5 +175,12 @@ class ImportMetadata extends Command
         $diskName = $this->detectOriginalDisk($path);
 
         return config('filesystems.disks')[$diskName]['visibility'] ?? 'private';
+    }
+
+    private function appendBackingData(Metadata $existingEntry, Metadata $entry)
+    {
+        foreach ($entry->backingData->disks() as $disk) {
+            $existingEntry->backingData->addDisk($disk, $entry->backingData->getDisk($disk));
+        }
     }
 }
