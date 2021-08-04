@@ -85,7 +85,7 @@ class ImportMetadata extends Command
                 if ($mode === 'ignore') {
                     continue;
                 } elseif ($mode === 'overwrite') {
-                    $existingEntry = $this->repository->getMetadata();
+                    $existingEntry = $this->repository->getMetadata($entry->path);
                     $existingEntry->setBackingData($entry->backingData);
                     $this->repository->record($existingEntry);
                 } elseif ($mode === 'append') {
