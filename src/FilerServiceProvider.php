@@ -40,6 +40,8 @@ class FilerServiceProvider extends ServiceProvider
                 return $app->make('filesystem')->disk($backing_disk);
             }, $config['backing_disks']));
 
+            $config['original_disks'] = $config['original_disks'] ?? [];
+
             $original_disks = array_combine($config['original_disks'], array_map(function ($backing_disk) use ($app) {
                 return $app->make('filesystem')->disk($backing_disk);
             }, $config['original_disks']));
