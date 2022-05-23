@@ -9,6 +9,7 @@ class TestCase extends BaseTestCase
 {
     /**
      * Get package providers.
+     *
      * @param  \Illuminate\Foundation\Application  $app
      * @return array
      */
@@ -21,6 +22,7 @@ class TestCase extends BaseTestCase
 
     /**
      * Define environment setup.
+     *
      * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */

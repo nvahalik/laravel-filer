@@ -111,7 +111,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     }
 
     /**
-     * @param  BackingData  $backingData An array of backing data.
+     * @param  BackingData  $backingData  An array of backing data.
      * @return false | string
      */
     public function read(BackingData $backingData)
