@@ -184,7 +184,8 @@ class Metadata implements Arrayable, Jsonable
     {
         $mimetype = Util::guessMimeType($path, $contents);
         if (is_resource($contents)) {
-            $size = Util::contentSize(stream_get_contents($contents));
+            fseek($contents, 0, SEEK_END);
+            $size = ftell($contents);
             rewind($contents);
         } else {
             $size = Util::contentSize($contents);
