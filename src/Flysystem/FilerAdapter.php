@@ -225,7 +225,6 @@ class FilerAdapter implements AdapterInterface
      * Grab the metadata from the store. If it isn't there, try it from the original disks, if they are set.
      *
      * @param $path
-     *
      * @return Metadata
      */
     protected function pathMetadata($path): Metadata

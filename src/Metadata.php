@@ -63,7 +63,6 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param string $path
-     *
      * @return Metadata
      */
     public function setPath(string $path): self
@@ -82,7 +81,6 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param mixed|string $filename
-     *
      * @return Metadata
      */
     public function setFilename(string $filename): self
@@ -94,7 +92,6 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param string|null $mimetype
-     *
      * @return Metadata
      */
     public function setMimetype(string $mimetype = null): self
@@ -106,7 +103,6 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param string $visibility
-     *
      * @return Metadata
      */
     public function setVisibility(string $visibility): self
@@ -118,7 +114,6 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param int $size
-     *
      * @return Metadata
      */
     public function setSize(int $size): self
@@ -137,7 +132,6 @@ class Metadata implements Arrayable, Jsonable
 
     /**
      * @param BackingData $backingData
-     *
      * @return Metadata
      */
     public function setBackingData(BackingData $backingData): self
