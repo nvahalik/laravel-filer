@@ -3,5 +3,4 @@ preset: laravel
 risky: false
 
 enabled:
-  - phpdoc_order
   - phpdoc_separation
