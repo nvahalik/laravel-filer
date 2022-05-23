@@ -13,7 +13,8 @@
     "require": {
         "php": ">=7.4",
         "illuminate/database": "^8.2",
-        "illuminate/support": "^8.2"
+        "illuminate/support": "^8.2",
+        "league/flysystem": "^1"
     },
     "suggest": {
         "ext-json": "*"
