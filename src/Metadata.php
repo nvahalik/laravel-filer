@@ -9,6 +9,7 @@ use League\Flysystem\Util;
 
 /**
  * Class MetadataRepository.
+ *
  * @property string path
  */
 class Metadata implements Arrayable, Jsonable
@@ -145,16 +146,15 @@ class Metadata implements Arrayable, Jsonable
     public BackingData $backingData;
 
     public function __construct(
-        string      $path,
-        string      $mimetype = 'application/octet-stream',
-        int         $size = 0,
-        string      $etag = null,
-        int         $timestamp = null,
-        string      $visibility = null,
+        string $path,
+        string $mimetype = 'application/octet-stream',
+        int $size = 0,
+        string $etag = null,
+        int $timestamp = null,
+        string $visibility = null,
         BackingData $backingData = null,
-        string      $id = null
-    )
-    {
+        string $id = null
+    ) {
         $this->path = $path;
         $this->mimetype = $mimetype;
         $this->size = $size;
