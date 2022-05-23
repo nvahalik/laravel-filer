@@ -9,7 +9,6 @@ use League\Flysystem\Util;
 
 /**
  * Class MetadataRepository.
- *
  * @property string path
  */
 class Metadata implements Arrayable, Jsonable
@@ -62,7 +61,7 @@ class Metadata implements Arrayable, Jsonable
     }
 
     /**
-     * @param string $path
+     * @param  string  $path
      * @return Metadata
      */
     public function setPath(string $path): self
@@ -80,7 +79,7 @@ class Metadata implements Arrayable, Jsonable
     }
 
     /**
-     * @param mixed|string $filename
+     * @param  mixed|string  $filename
      * @return Metadata
      */
     public function setFilename(string $filename): self
@@ -91,7 +90,7 @@ class Metadata implements Arrayable, Jsonable
     }
 
     /**
-     * @param string|null $mimetype
+     * @param  string|null  $mimetype
      * @return Metadata
      */
     public function setMimetype(string $mimetype = null): self
@@ -102,7 +101,7 @@ class Metadata implements Arrayable, Jsonable
     }
 
     /**
-     * @param string $visibility
+     * @param  string  $visibility
      * @return Metadata
      */
     public function setVisibility(string $visibility): self
@@ -113,7 +112,7 @@ class Metadata implements Arrayable, Jsonable
     }
 
     /**
-     * @param int $size
+     * @param  int  $size
      * @return Metadata
      */
     public function setSize(int $size): self
@@ -131,7 +130,7 @@ class Metadata implements Arrayable, Jsonable
     }
 
     /**
-     * @param BackingData $backingData
+     * @param  BackingData  $backingData
      * @return Metadata
      */
     public function setBackingData(BackingData $backingData): self
@@ -146,15 +145,16 @@ class Metadata implements Arrayable, Jsonable
     public BackingData $backingData;
 
     public function __construct(
-        string $path,
-        string $mimetype = 'application/octet-stream',
-        int $size = 0,
-        string $etag = null,
-        int $timestamp = null,
-        string $visibility = null,
+        string      $path,
+        string      $mimetype = 'application/octet-stream',
+        int         $size = 0,
+        string      $etag = null,
+        int         $timestamp = null,
+        string      $visibility = null,
         BackingData $backingData = null,
-        string $id = null
-    ) {
+        string      $id = null
+    )
+    {
         $this->path = $path;
         $this->mimetype = $mimetype;
         $this->size = $size;
@@ -198,14 +198,14 @@ class Metadata implements Arrayable, Jsonable
     public function toArray(): array
     {
         return [
-            'id'           => $this->id,
-            'path'         => $this->path,
-            'etag'         => $this->etag,
-            'mimetype'     => $this->mimetype,
-            'visibility'   => $this->visibility,
-            'size'         => $this->size,
+            'id' => $this->id,
+            'path' => $this->path,
+            'etag' => $this->etag,
+            'mimetype' => $this->mimetype,
+            'visibility' => $this->visibility,
+            'size' => $this->size,
             'backing_data' => $this->backingData,
-            'timestamp'    => $this->timestamp,
+            'timestamp' => $this->timestamp,
         ];
     }
 

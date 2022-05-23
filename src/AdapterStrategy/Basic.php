@@ -111,9 +111,8 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     }
 
     /**
-     * @param BackingData $backingData
+     * @param  BackingData  $backingData
      *  An array of backing data.
-     *
      * @return false | string
      */
     public function read(BackingData $backingData)
@@ -164,7 +163,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
 
                 $adapter->getAdapter()->update($this->readAdapterPath($id, $backingData), $contents, $originalConfig);
             } catch (\Exception $e) {
-                throw new BackingAdapterException('Unable to write to remote adapter: '.$id.' path ('.$path.')');
+                throw new BackingAdapterException('Unable to write to remote adapter: ' . $id . ' path (' . $path . ')');
             }
         }
 
@@ -180,7 +179,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
 
                 $adapter->getAdapter()->updateStream($this->readAdapterPath($id, $backingData), $stream, $originalConfig);
             } catch (\Exception $e) {
-                throw new BackingAdapterException('Unable to write to remote adapter: '.$id.' path ('.$path.')');
+                throw new BackingAdapterException('Unable to write to remote adapter: ' . $id . ' path (' . $path . ')');
             }
         }
 
@@ -202,7 +201,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     {
         $adapters = $this->getReadAdapters();
 
-        if (! array_key_exists($disk, $adapters)) {
+        if (!array_key_exists($disk, $adapters)) {
             throw new BackingAdapterException(sprintf('The backing adapter (%s) does not exist on the adapter.',
                 $disk));
         }
