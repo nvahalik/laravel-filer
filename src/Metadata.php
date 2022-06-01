@@ -62,6 +62,23 @@ class Metadata implements Arrayable, Jsonable
     }
 
     /**
+     * @param  resource|string  $contents
+     * @return false|int
+     */
+    public static function getSize($contents)
+    {
+        if (is_resource($contents)) {
+            fseek($contents, 0, SEEK_END);
+            $size = ftell($contents);
+            rewind($contents);
+        } else {
+            $size = Util::contentSize($contents);
+        }
+
+        return $size;
+    }
+
+    /**
      * @param  string  $path
      * @return Metadata
      */
@@ -169,22 +186,24 @@ class Metadata implements Arrayable, Jsonable
 
     public static function generateEtag($content)
     {
-        $data = is_resource($content) ? stream_get_contents($content) : $content;
+        if (is_resource($content)) {
+            // Use incremental hashing to generate the MD5 sum without running out of memory for big files.
+            $hash = hash_init('md5');
+            $location = ftell($content);
+            rewind($content);
+            hash_update_stream($hash, $content);
+            fseek($content, $location);
 
-        return md5($data);
+            return hash_final($hash);
+        }
+
+        return md5($content);
     }
 
     public static function generate($path, $contents): Metadata
     {
         $mimetype = Util::guessMimeType($path, $contents);
-        if (is_resource($contents)) {
-            fseek($contents, 0, SEEK_END);
-            $size = ftell($contents);
-            rewind($contents);
-        } else {
-            $size = Util::contentSize($contents);
-        }
-
+        $size = self::getSize($contents);
         $etag = static::generateEtag($contents);
 
         return new static(
@@ -221,12 +240,7 @@ class Metadata implements Arrayable, Jsonable
     public function updateContents($contents)
     {
         $this->mimetype = Util::guessMimeType($this->path, $contents);
-        if (is_resource($contents)) {
-            $this->size = Util::contentSize(stream_get_contents($contents));
-            rewind($contents);
-        } else {
-            $this->size = Util::contentSize($contents);
-        }
+        $this->size = $this->getSize($contents);
         $this->etag = $this->generateEtag($contents);
         $this->updated_at = time();
 
