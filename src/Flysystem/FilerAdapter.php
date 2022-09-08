@@ -4,12 +4,6 @@ namespace Nvahalik\Filer\Flysystem;
 
 use League\Flysystem\Config;
 use League\Flysystem\FileAttributes;
-use League\Flysystem\FilesystemException;
-use League\Flysystem\UnableToCheckExistence;
-use League\Flysystem\UnableToCreateDirectory;
-use League\Flysystem\UnableToDeleteDirectory;
-use League\Flysystem\UnableToMoveFile;
-use League\Flysystem\UnableToRetrieveMetadata;
 use League\Flysystem\Util;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
@@ -148,7 +142,6 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
             return;
         }
 
-        return;
     }
 
     /**
@@ -167,7 +160,6 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
             throw $e;
         }
 
-        return;
     }
 
     /**
@@ -368,9 +360,8 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
     /**
      * @todo Is this right?
      *
-     * @param string $path
+     * @param  string  $path
      * @return bool
-     *
      */
     public function fileExists(string $path): bool
     {
@@ -380,9 +371,8 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
     /**
      * @todo Is this right?
      *
-     * @param string $path
+     * @param  string  $path
      * @return bool
-     *
      */
     public function directoryExists(string $path): bool
     {

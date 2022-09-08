@@ -2,7 +2,6 @@
 
 namespace Nvahalik\Filer\MetadataRepository;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Storage;
 use Nvahalik\Filer\Metadata;
 
@@ -17,7 +16,7 @@ class Json extends Memory
         try {
             $data = Storage::get($filename);
 
-            if($data === null) {
+            if ($data === null) {
                 return;
             }
 
