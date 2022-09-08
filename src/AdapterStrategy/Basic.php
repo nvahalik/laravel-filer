@@ -2,7 +2,6 @@
 
 namespace Nvahalik\Filer\AdapterStrategy;
 
-use Illuminate\Contracts\Filesystem\FileExistsException;
 use Illuminate\Filesystem\FilesystemAdapter;
 use League\Flysystem\Config;
 use Nvahalik\Filer\BackingData;

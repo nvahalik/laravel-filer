@@ -5,7 +5,6 @@ namespace Nvahalik\Filer;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use League\Flysystem\Util;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use League\MimeTypeDetection\MimeTypeDetector;
 

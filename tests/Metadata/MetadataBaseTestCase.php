@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Metadata;
-use Nvahalik\Filer\MetadataRepository\Base;
 use Nvahalik\Filer\MetadataRepository\Memory;
 use Tests\TestCase;
 
@@ -16,7 +15,8 @@ class MetadataBaseTestCase extends TestCase
 
     protected MetadataRepository $repository;
 
-    public function setUp(): void {
+    public function setUp(): void
+    {
         parent::setUp();
         $this->repository = new Memory();
         $this->repository->setStorageId('test');
