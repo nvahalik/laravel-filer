@@ -88,11 +88,12 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
         // Update it.
         try {
             $backingData = $isStream
-                ? $this->adapterManager->updateStream($path, $contents, $config, $metadata->backingData)
-                : $this->adapterManager->update($path, $contents, $config, $metadata->backingData);
+                ? $this->adapterManager->writeStream($path, $contents, $config, $metadata->backingData)
+                : $this->adapterManager->write($path, $contents, $config, $metadata->backingData);
 
             if ($isStream) {
-                Util::rewindStream($contents);
+                // @todo WDF do I do here?
+                //Util::rewindStream($contents);
             }
 
             $metadata->updateContents($contents)
@@ -110,18 +111,10 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function updateStream($path, $resource, Config $config)
-    {
-        return $this->update($path, $resource, $config, true);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function rename($originalPath, $newPath)
     {
         // We don't really need to do anything. The on-disk doesn't have to change.
-        $this->storageMetadata->rename($originalPath, $newPath);
+        $this->storageMetadata->move($originalPath, $newPath);
 
         return true;
     }
@@ -129,13 +122,13 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function copy($originalPath, $newPath)
+    public function copy(string $originalPath, string $newPath, $config = null): void
     {
         // Grab a copy of the metadata and save it with the new path information.
         $originalMetadata = $this->pathMetadata($originalPath);
 
         if (! $originalMetadata) {
-            return false;
+            return;
         }
 
         try {
@@ -143,7 +136,7 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
             $copyBackingData = $this->adapterManager->copy($originalMetadata->backingData, $newPath);
 
             if (! $copyBackingData) {
-                return false;
+                return;
             }
 
             $copyMetadata = (clone $originalMetadata)
@@ -152,16 +145,16 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
 
             $this->storageMetadata->record($copyMetadata);
         } catch (\Exception $e) {
-            return false;
+            return;
         }
 
-        return true;
+        return;
     }
 
     /**
      * @inheritDoc
      */
-    public function delete($path)
+    public function delete(string $path): void
     {
         // Grab a copy of the metadata and save it with the new path information.
         $metadata = $this->pathMetadata($path);
@@ -171,10 +164,10 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
             $this->adapterManager->delete($path, $metadata->backingData);
             $this->storageMetadata->delete($path);
         } catch (BackingAdapterException $e) {
-            return false;
+            throw $e;
         }
 
-        return true;
+        return;
     }
 
     /**
@@ -199,9 +192,9 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function setVisibility($path, $visibility)
+    public function setVisibility(string $path, $visibility): void
     {
-        return $this->storageMetadata->setVisibility($path, $visibility);
+        $this->storageMetadata->setVisibility($path, $visibility);
     }
 
     /**
@@ -214,8 +207,10 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
 
     /**
      * @inheritDoc
+     *
+     * @todo this is a problem. how can you return an array here? Parent returns a string.
      */
-    public function read($path)
+    public function read(string $path)
     {
         // Get the metadata. Where is this file?
         $metadata = $this->pathMetadata($path);
@@ -265,10 +260,10 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function listContents($directory = '', $recursive = false)
+    public function listContents(string $directory = '', bool $deep = false): iterable
     {
         // We don't need to reach out to the storage provider because we have it all cached.
-        return $this->storageMetadata->listContents($directory, $recursive);
+        return $this->storageMetadata->listContents($directory, $deep);
     }
 
     /**
@@ -370,56 +365,62 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
         ];
     }
 
-
-
-
-
-
-    //
-    // THESE ARE ALL STUBS
-    //
+    /**
+     * @todo Is this right?
+     *
+     * @param string $path
+     * @return bool
+     *
+     */
     public function fileExists(string $path): bool
     {
-        // TODO: Implement fileExists() method.
+        return $this->has($path);
     }
 
+    /**
+     * @todo Is this right?
+     *
+     * @param string $path
+     * @return bool
+     *
+     */
     public function directoryExists(string $path): bool
     {
-        // TODO: Implement directoryExists() method.
+        return $this->has($path);
     }
 
     public function deleteDirectory(string $path): void
     {
-        // TODO: Implement deleteDirectory() method.
+        $this->deleteDir($path);
     }
 
     public function createDirectory(string $path, Config $config): void
     {
-        // TODO: Implement createDirectory() method.
+        $this->createDir($path, $config);
     }
 
     public function visibility(string $path): FileAttributes
     {
-        // TODO: Implement visibility() method.
+        return $this->getMetadata($path);
     }
 
     public function mimeType(string $path): FileAttributes
     {
-        // TODO: Implement mimeType() method.
+        return $this->getMetadata($path);
     }
 
     public function lastModified(string $path): FileAttributes
     {
-        // TODO: Implement lastModified() method.
+        return $this->getMetadata($path);
     }
 
     public function fileSize(string $path): FileAttributes
     {
-        // TODO: Implement fileSize() method.
+        return $this->getMetadata($path);
     }
 
     public function move(string $source, string $destination, Config $config): void
     {
-        // TODO: Implement move() method.
+        $this->rename($source, $destination);
     }
 }
