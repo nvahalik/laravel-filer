@@ -6,7 +6,7 @@ use Nvahalik\Filer\MetadataRepository\Memory;
 
 class MemoryTests extends MetadataBaseTestCase
 {
-    protected function setUp(): void
+    public function setUp(): void
     {
         $this->repository = new Memory;
         $this->repository->setStorageId('test');

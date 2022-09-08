@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use League\Flysystem\Util;
+use League\MimeTypeDetection\FinfoMimeTypeDetector;
+use League\MimeTypeDetection\MimeTypeDetector;
 
 /**
  * Class MetadataRepository.
@@ -31,6 +33,8 @@ class Metadata implements Arrayable, Jsonable
     public int $timestamp;
 
     public string $visibility = 'private';
+
+    public MimeTypeDetector $detector;
 
     public static function deserialize($array)
     {
@@ -72,7 +76,7 @@ class Metadata implements Arrayable, Jsonable
             $size = ftell($contents);
             rewind($contents);
         } else {
-            $size = Util::contentSize($contents);
+            $size = strlen($contents);
         }
 
         return $size;
@@ -182,6 +186,8 @@ class Metadata implements Arrayable, Jsonable
         $this->updated_at = $timestamp ?? time();
         $this->timestamp = $timestamp ?? time();
         $this->id = $id;
+
+        $this->detector = new FinfoMimeTypeDetector();
     }
 
     public static function generateEtag($content)
@@ -202,7 +208,7 @@ class Metadata implements Arrayable, Jsonable
 
     public static function generate($path, $contents): Metadata
     {
-        $mimetype = Util::guessMimeType($path, $contents);
+        $mimetype = \Nvahalik\Filer\Services\MimeType::detectMimeType($path, $contents);
         $size = self::getSize($contents);
         $etag = static::generateEtag($contents);
 
@@ -239,7 +245,7 @@ class Metadata implements Arrayable, Jsonable
 
     public function updateContents($contents)
     {
-        $this->mimetype = Util::guessMimeType($this->path, $contents);
+        $mimetype = \Nvahalik\Filer\Services\MimeType::detectMimeType($contents);
         $this->size = $this->getSize($contents);
         $this->etag = $this->generateEtag($contents);
         $this->updated_at = time();

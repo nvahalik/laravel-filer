@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Metadata;
+use Nvahalik\Filer\MetadataRepository\Base;
+use Nvahalik\Filer\MetadataRepository\Memory;
 use Tests\TestCase;
 
 class MetadataBaseTestCase extends TestCase
@@ -13,6 +15,12 @@ class MetadataBaseTestCase extends TestCase
     use RefreshDatabase;
 
     protected MetadataRepository $repository;
+
+    public function setUp(): void {
+        parent::setUp();
+        $this->repository = new Memory();
+        $this->repository->setStorageId('test');
+    }
 
     public function test_it_returns_false_if_metadata_does_not_exist()
     {

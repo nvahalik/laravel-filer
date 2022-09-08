@@ -7,7 +7,7 @@ use Nvahalik\Filer\MetadataRepository\Json;
 
 class JsonTests extends MetadataBaseTestCase
 {
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         Storage::fake();

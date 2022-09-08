@@ -16,13 +16,19 @@ class Json extends Memory
 
         try {
             $data = Storage::get($filename);
-            $this->data = json_decode($data, true, 10);
+
+            if($data === null) {
+                return;
+            }
+
+            $this->data = json_decode($data, true, 10, JSON_THROW_ON_ERROR);
             foreach ($this->data as $storageId => $contents) {
                 $this->data[$storageId] = array_map(function ($array) {
                     return Metadata::deserialize($array);
                 }, $contents);
             }
-        } catch (FileNotFoundException $e) {
+        } catch (\JsonException $e) {
+            throw $e;
         }
     }
 

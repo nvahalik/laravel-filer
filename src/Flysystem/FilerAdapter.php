@@ -2,8 +2,14 @@
 
 namespace Nvahalik\Filer\Flysystem;
 
-use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
+use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToCheckExistence;
+use League\Flysystem\UnableToCreateDirectory;
+use League\Flysystem\UnableToDeleteDirectory;
+use League\Flysystem\UnableToMoveFile;
+use League\Flysystem\UnableToRetrieveMetadata;
 use League\Flysystem\Util;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
@@ -12,7 +18,7 @@ use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Exceptions\BackingAdapterException;
 use Nvahalik\Filer\Metadata;
 
-class FilerAdapter implements AdapterInterface
+class FilerAdapter implements \League\Flysystem\FilesystemAdapter
 {
     protected FilerConfig $config;
 
@@ -362,5 +368,58 @@ class FilerAdapter implements AdapterInterface
             'adapter'  => $this->adapterManager->getDisk($disk),
             'metadata' => current($metadata),
         ];
+    }
+
+
+
+
+
+
+    //
+    // THESE ARE ALL STUBS
+    //
+    public function fileExists(string $path): bool
+    {
+        // TODO: Implement fileExists() method.
+    }
+
+    public function directoryExists(string $path): bool
+    {
+        // TODO: Implement directoryExists() method.
+    }
+
+    public function deleteDirectory(string $path): void
+    {
+        // TODO: Implement deleteDirectory() method.
+    }
+
+    public function createDirectory(string $path, Config $config): void
+    {
+        // TODO: Implement createDirectory() method.
+    }
+
+    public function visibility(string $path): FileAttributes
+    {
+        // TODO: Implement visibility() method.
+    }
+
+    public function mimeType(string $path): FileAttributes
+    {
+        // TODO: Implement mimeType() method.
+    }
+
+    public function lastModified(string $path): FileAttributes
+    {
+        // TODO: Implement lastModified() method.
+    }
+
+    public function fileSize(string $path): FileAttributes
+    {
+        // TODO: Implement fileSize() method.
+    }
+
+    public function move(string $source, string $destination, Config $config): void
+    {
+        // TODO: Implement move() method.
     }
 }
