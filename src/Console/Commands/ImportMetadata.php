@@ -3,10 +3,11 @@
 namespace Nvahalik\Filer\Console\Commands;
 
 use Carbon\Carbon;
+use GuzzleHttp\Psr7\MimeType;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
-use League\Flysystem\Util\MimeType;
+//use League\Flysystem\Util\MimeType;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Metadata;

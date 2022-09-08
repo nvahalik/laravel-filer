@@ -11,10 +11,9 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
-        "illuminate/database": "^8.2",
-        "illuminate/support": "^8.2",
-        "league/flysystem": "^1"
+        "php": ">=8.0",
+        "league/flysystem": "^3",
+        "league/mime-type-detection": "^1.11"
     },
     "suggest": {
         "ext-json": "*"
@@ -47,6 +46,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
-        "orchestra/testbench": "^6.17"
+        "orchestra/testbench": "^7.7",
+        "league/flysystem-adapter-test-utilities": "^3.1"
     }
 }

@@ -33,7 +33,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                     $adapterMetadata['etag'] = rtrim(ltrim($adapterMetadata['etag'], '"'), '"');
                 }
                 $metadata[$name] = $adapterMetadata;
-            } catch (\Exception $exception) {
+            } catch (\Throwable $exception) {
                 // Ignore any exceptions, at least for now.
             }
         }
@@ -66,8 +66,8 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 if ($backingAdapter->getAdapter()->writeStream($path, $stream, $originalConfig)) {
                     return BackingData::diskAndPath($diskId, $path);
                 }
-            } catch (FileExistsException $e) {
-                // Ignore. We'll try the next one.
+            } catch (\Throwable $e) {
+                // Something failed, but not due to an existing file...
             }
         }
 
@@ -88,8 +88,8 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 if ($backingAdapter->getAdapter()->write($path, $contents, $originalConfig)) {
                     return BackingData::diskAndPath($diskId, $path);
                 }
-            } catch (FileExistsException $e) {
-                // Ignore. We'll try the next one.
+            } catch (\Throwable $e) {
+                // Something failed, but not due to an existing file...
             }
         }
 
@@ -103,7 +103,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 if ($object = $adapter->getAdapter()->readStream($this->readAdapterPath($id, $backingData))) {
                     return $object['stream'];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
             }
         }
 
@@ -121,7 +121,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 if ($response = $adapter->getAdapter()->read($this->readAdapterPath($id, $backingData))) {
                     return $response['contents'];
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
             }
         }
 
@@ -140,7 +140,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
             try {
                 return $adapter->getAdapter()->delete($this->readAdapterPath($id, $backingData));
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 throw new BackingAdapterException("Unable to delete ($path) on disk ($id).");
             }
         }
@@ -161,23 +161,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 $originalConfig->setFallback($config);
 
                 $adapter->getAdapter()->update($this->readAdapterPath($id, $backingData), $contents, $originalConfig);
-            } catch (\Exception $e) {
-                throw new BackingAdapterException('Unable to write to remote adapter: '.$id.' path ('.$path.')');
-            }
-        }
-
-        return $backingData;
-    }
-
-    public function updateStream($path, $stream, Config $config, $backingData): BackingData
-    {
-        foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
-            try {
-                $originalConfig = $adapter->getConfig();
-                $originalConfig->setFallback($config);
-
-                $adapter->getAdapter()->updateStream($this->readAdapterPath($id, $backingData), $stream, $originalConfig);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 throw new BackingAdapterException('Unable to write to remote adapter: '.$id.' path ('.$path.')');
             }
         }
@@ -191,7 +175,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
             $stream = $this->readStream($source);
 
             return $this->writeStream($destination, $stream);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

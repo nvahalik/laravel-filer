@@ -23,9 +23,9 @@ interface AdapterStrategy
 
     public function read(BackingData $backingData);
 
-    public function update($path, $contents, Config $config, $backingData): ?BackingData;
-
-    public function updateStream($path, $stream, Config $config, $backingData): ?BackingData;
+//    public function update($path, $contents, Config $config, $backingData): ?BackingData;
+//
+//    public function updateStream($path, $stream, Config $config, $backingData): ?BackingData;
 
     public function delete(string $path, $backingData);
 
