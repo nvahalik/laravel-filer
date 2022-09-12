@@ -91,6 +91,38 @@ class Memory extends Base implements MetadataRepository
         return isset($this->data[$this->storageId][$path]);
     }
 
+    /**
+     * Determine if a directory exists.
+     *
+     * If we have a file stored at a/b/file.txt, then `a` exists. And `a/b` exists.
+     */
+    function directoryExists(string $path): bool
+    {
+        $breakdown = array_filter(explode(DIRECTORY_SEPARATOR, $path));
+
+        foreach ($this->data as $filePath => $data) {
+            // If the strings don't match, then don't worry about it.
+            if (! str_starts_with($filePath, $path)) {
+                continue;
+            }
+
+            // We don't store directories in the index, only files. This is a file.
+            if ($filePath === $path) {
+                // It is actually a file.
+                return false;
+            }
+
+            // Break down the path into parts and see if the requested path lives within
+            // the path. If it does, then the directory "exists".
+            $pathBreakdown = array_filter(explode(DIRECTORY_SEPARATOR, $filePath));
+            if (count(array_diff($breakdown, $pathBreakdown)) === 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function setVisibility(string $path, string $visibility)
     {
         if ($this->fileExists($path)) {

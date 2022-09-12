@@ -35,6 +35,8 @@ interface MetadataRepository
 
     public function fileExists(string $path): bool;
 
+    public function directoryExists(string $path): bool;
+
     public function setVisibility(string $path, string $visbility);
 
     public function record(Metadata $metadata);
