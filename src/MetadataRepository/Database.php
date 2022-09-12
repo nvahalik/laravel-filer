@@ -155,4 +155,9 @@ class Database extends Base implements MetadataRepository
 
         return $this;
     }
+
+    public function directoryExists(string $path): bool
+    {
+        // TODO: Implement directoryExists() method.
+    }
 }
