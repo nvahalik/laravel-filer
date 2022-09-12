@@ -34,7 +34,7 @@ class JsonTests extends MetadataBaseTestCase
         $this->repository = new Json('test.json');
         $this->repository->setStorageId('test');
 
-        $this->assertTrue($this->repository->has('example.txt'));
+        $this->assertTrue($this->repository->fileExists('example.txt'));
         $md = $this->repository->getMetadata('example.txt');
         $this->assertIsObject($md);
 

@@ -194,7 +194,7 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
      */
     public function has($path)
     {
-        return $this->storageMetadata->has($path) || $this->hasOriginalDiskFile($path);
+        return $this->storageMetadata->fileExists($path) || $this->hasOriginalDiskFile($path);
     }
 
     /**
