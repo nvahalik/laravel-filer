@@ -82,7 +82,7 @@ class ImportMetadata extends Command
 
         /** @var Metadata $entry */
         foreach ($entries as $entry) {
-            if ($this->repository->has($entry->path)) {
+            if ($this->repository->fileExists($entry->path)) {
                 if ($mode === 'ignore') {
                     continue;
                 } elseif ($mode === 'overwrite') {

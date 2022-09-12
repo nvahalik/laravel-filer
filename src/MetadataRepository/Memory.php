@@ -65,7 +65,9 @@ class Memory extends Base implements MetadataRepository
         $directoryOffset = strlen($directory);
 
         $matchingFiles = array_filter(array_keys($this->data[$this->storageId]), function ($path) use (
-            $recursive, $directory, $directoryOffset
+            $recursive,
+            $directory,
+            $directoryOffset
         ) {
             $matchesPath = $directory === '' ? true : stripos($path, $directory) === 0;
             $hasTrailingDirectories = strpos($path, '/', $directoryOffset) === false;
@@ -77,21 +79,21 @@ class Memory extends Base implements MetadataRepository
 
         foreach ($matchingFiles as $file) {
             $contents[] = $this->data[$this->storageId] + [
-                'path' => str_replace($directory, '', $file),
-            ];
+                    'path' => str_replace($directory, '', $file),
+                ];
         }
 
         return $contents;
     }
 
-    public function has(string $path): bool
+    public function fileExists(string $path): bool
     {
         return isset($this->data[$this->storageId][$path]);
     }
 
     public function setVisibility(string $path, string $visibility)
     {
-        if ($this->has($path)) {
+        if ($this->fileExists($path)) {
             $this->data[$this->storageId][$path]->visibility = $visibility;
         }
 

@@ -97,7 +97,7 @@ class Database extends Base implements MetadataRepository
             });
     }
 
-    public function has(string $path): bool
+    public function fileExists(string $path): bool
     {
         return $this->newQuery()
             ->where('path', '=', $path)

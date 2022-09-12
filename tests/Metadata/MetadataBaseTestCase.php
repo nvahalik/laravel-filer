@@ -93,13 +93,13 @@ class MetadataBaseTestCase extends TestCase
     {
         $this->repository->record(Metadata::generate('example.txt', 'This is a test'));
 
-        $this->assertTrue($this->repository->has('example.txt'));
-        $this->assertFalse($this->repository->has('example2.txt'));
+        $this->assertTrue($this->repository->fileExists('example.txt'));
+        $this->assertFalse($this->repository->fileExists('example2.txt'));
 
         $this->repository->rename('example.txt', 'example2.txt');
 
-        $this->assertFalse($this->repository->has('example.txt'));
-        $this->assertTrue($this->repository->has('example2.txt'));
+        $this->assertFalse($this->repository->fileExists('example.txt'));
+        $this->assertTrue($this->repository->fileExists('example2.txt'));
     }
 
     public function test_it_sets_the_visibility_of_a_file()
@@ -150,11 +150,11 @@ class MetadataBaseTestCase extends TestCase
     {
         $this->repository->record(Metadata::generate('example.txt', 'This is a test'));
 
-        $this->assertTrue($this->repository->has('example.txt'));
+        $this->assertTrue($this->repository->fileExists('example.txt'));
 
         $this->repository->delete('example.txt');
 
-        $this->assertFalse($this->repository->has('example.txt'));
+        $this->assertFalse($this->repository->fileExists('example.txt'));
     }
 
     public function test_it_adds_backing_data()

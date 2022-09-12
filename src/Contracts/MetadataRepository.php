@@ -33,7 +33,7 @@ interface MetadataRepository
 
     public function listContents(string $directory = '', bool $recursive = false);
 
-    public function has(string $path): bool;
+    public function fileExists(string $path): bool;
 
     public function setVisibility(string $path, string $visbility);
 
