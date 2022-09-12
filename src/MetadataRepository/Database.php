@@ -158,6 +158,8 @@ class Database extends Base implements MetadataRepository
 
     public function directoryExists(string $path): bool
     {
-        // TODO: Implement directoryExists() method.
+        return $this->newQuery()
+            ->where('path', 'LIKE', '%'.$path.'%')
+            ->exists();
     }
 }
