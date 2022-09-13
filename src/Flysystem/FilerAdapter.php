@@ -4,7 +4,6 @@ namespace Nvahalik\Filer\Flysystem;
 
 use League\Flysystem\Config;
 use League\Flysystem\FileAttributes;
-use League\Flysystem\Util;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
@@ -38,7 +37,7 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function write($path, $contents, Config $config, $isStream = false)
+    public function write($path, $contents, Config $config, $isStream = false): void
     {
         // Create the initial entry.
         $backingData = $isStream
@@ -46,7 +45,8 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
             : $this->adapterManager->write($path, $contents, $config);
 
         if ($isStream) {
-            Util::rewindStream($contents);
+            //@todo We believe this is unnecessary
+//            Util::rewindStream($contents);
         }
 
         // Write the data out somewhere.
@@ -57,18 +57,17 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
             // Update the entry to ensure that we've recorded what actually happened with the data.
             $this->storageMetadata->record($metadata);
 
-            return $this->storageMetadata->getMetadata($path);
+            $this->storageMetadata->getMetadata($path);
         }
 
-        return false;
     }
 
     /**
      * @inheritDoc
      */
-    public function writeStream($path, $resource, Config $config)
+    public function writeStream($path, $resource, Config $config): void
     {
-        return $this->write($path, $resource, $config, true);
+        $this->write($path, $resource, $config, true);
     }
 
     /**
@@ -86,7 +85,7 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
                 : $this->adapterManager->write($path, $contents, $config, $metadata->backingData);
 
             if ($isStream) {
-                // @todo WDF do I do here?
+                // @todo We believe this is unnecessary
                 //Util::rewindStream($contents);
             }
 
@@ -202,16 +201,14 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
      *
      * @todo this is a problem. how can you return an array here? Parent returns a string.
      */
-    public function read(string $path)
+    public function read(string $path): string
     {
         // Get the metadata. Where is this file?
         $metadata = $this->pathMetadata($path);
 
         if ($contents = $this->adapterManager->read($metadata->backingData)) {
-            return ['type' => 'file', 'path' => $path, 'contents' => $contents];
+            return $contents;
         }
-
-        return false;
     }
 
     /**
@@ -237,7 +234,7 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function readStream($path)
+    public function readStream($path): array
     {
         // Get the metadata. Where is this file?
         $metadata = $this->pathMetadata($path);
@@ -245,8 +242,6 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
         if ($stream = $this->adapterManager->readStream($metadata->backingData)) {
             return ['type' => 'file', 'path' => $path, 'stream' => $stream];
         }
-
-        return false;
     }
 
     /**
@@ -269,8 +264,6 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
         if ($metadata) {
             return $asObject ? $metadata : $metadata->toArray();
         }
-
-        return false;
     }
 
     /**
