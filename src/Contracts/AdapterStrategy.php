@@ -15,9 +15,9 @@ interface AdapterStrategy
 
     public function getDisk(string $disk);
 
-    public function writeStream($path, $stream, Config $config): ?BackingData;
+    public function writeStream($path, $stream, Config $config): BackingData;
 
-    public function write($path, $contents, Config $config): ?BackingData;
+    public function write($path, $contents, Config $config): BackingData;
 
     public function readStream(BackingData $backingData);
 
@@ -25,5 +25,5 @@ interface AdapterStrategy
 
     public function delete(string $path, $backingData);
 
-    public function copy(BackingData $source, string $destination, Config $config): ?BackingData;
+    public function copy(BackingData $source, string $destination, Config $config): BackingData;
 }
