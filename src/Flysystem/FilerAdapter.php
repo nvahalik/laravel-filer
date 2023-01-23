@@ -59,7 +59,6 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
 
             $this->storageMetadata->getMetadata($path);
         }
-
     }
 
     /**
@@ -140,7 +139,6 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
         } catch (\Exception $e) {
             return;
         }
-
     }
 
     /**
@@ -158,7 +156,6 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
         } catch (BackingAdapterException $e) {
             throw $e;
         }
-
     }
 
     /**
