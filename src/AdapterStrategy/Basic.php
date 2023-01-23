@@ -6,6 +6,7 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use League\Flysystem\Config;
 use League\Flysystem\UnableToDeleteFile;
 use League\Flysystem\UnableToReadFile;
+use League\Flysystem\UnableToWriteFile;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
 use Nvahalik\Filer\Exceptions\BackingAdapterException;
@@ -55,7 +56,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         return false;
     }
 
-    public function writeStream($path, $stream, Config $config): ?BackingData
+    public function writeStream($path, $stream, Config $config): BackingData
     {
         /**
          * @var string $diskId
@@ -74,10 +75,10 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
             }
         }
 
-        return null;
+        throw UnableToWriteFile::atLocation($path, 'No backing servers stored the file.');
     }
 
-    public function write($path, $contents, Config $config): ?BackingData
+    public function write($path, $contents, Config $config): BackingData
     {
         /**
          * @var string $diskId
@@ -96,7 +97,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
             }
         }
 
-        return null;
+        throw UnableToWriteFile::atLocation($path, 'No backing servers stored the file.');
     }
 
     public function readStream($backingData)
@@ -156,7 +157,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         return $backingData->getDisk($id)['path'];
     }
 
-    public function copy(BackingData $source, string $destination, Config $config): ?BackingData
+    public function copy(BackingData $source, string $destination, Config $config): BackingData
     {
         $stream = $this->readStream($source);
 
