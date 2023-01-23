@@ -31,7 +31,7 @@ class FilerAdapter implements FilesystemAdapter
         $this->adapterManager = $adapterManager;
     }
 
-    public function getStorageMetadata()
+    public function getStorageMetadata(): MetadataRepository
     {
         return $this->storageMetadata;
     }
@@ -57,48 +57,7 @@ class FilerAdapter implements FilesystemAdapter
             $metadata->setBackingData($backingData);
 
             // Update the entry to ensure that we've recorded what actually happened with the data.
-            $this->storageMetadata->record($metadata);
-
-            $this->storageMetadata->getMetadata($path);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function writeStream($path, $resource, Config $config): void
-    {
-        $this->write($path, $resource, $config, true);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function update($path, $contents, Config $config, $isStream = false)
-    {
-        // Figure out where the data actually is...
-        $metadata = $this->pathMetadata($path);
-
-        // Update it.
-        try {
-            $backingData = $isStream
-                ? $this->adapterManager->writeStream($path, $contents, $config, $metadata->backingData)
-                : $this->adapterManager->write($path, $contents, $config, $metadata->backingData);
-
-            if ($isStream) {
-                // @todo We believe this is unnecessary
-                //Util::rewindStream($contents);
-            }
-
-            $metadata->updateContents($contents)
-                ->setBackingData($backingData);
-
-            // Update metadata with new size and timestamp?
-            $this->storageMetadata->record($metadata);
-
-            return $metadata->toArray();
-        } catch (BackingAdapterException $e) {
-            return false;
+            $this->getStorageMetadata()->record($metadata);
         }
     }
 
@@ -126,18 +85,15 @@ class FilerAdapter implements FilesystemAdapter
             // Copy the file.
             $copyBackingData = $this->adapterManager->copy($originalMetadata->backingData, $newPath);
 
-            if (! $copyBackingData) {
-                return;
-            }
-
-            $copyMetadata = (clone $originalMetadata)
-                ->setPath($newPath)
-                ->setBackingData($copyBackingData);
-
-            $this->storageMetadata->record($copyMetadata);
-        } catch (\Exception $e) {
+        if (! $copyBackingData) {
             return;
         }
+
+        $copyMetadata = (clone $originalMetadata)
+            ->setPath($destination)
+            ->setBackingData($copyBackingData);
+
+        $this->getStorageMetadata()->record($copyMetadata);
     }
 
     /**
@@ -148,32 +104,9 @@ class FilerAdapter implements FilesystemAdapter
         // Grab a copy of the metadata and save it with the new path information.
         $metadata = $this->pathMetadata($path);
 
-        try {
-            // Copy the file.
-            $this->adapterManager->delete($path, $metadata->backingData);
-            $this->storageMetadata->delete($path);
-        } catch (BackingAdapterException $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function deleteDir($dirname)
-    {
-        // Figure out what files are under the directory, if any, and then delete them.
-        // This is gonna be tough.
-
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createDir($dirname, Config $config)
-    {
-        return ['path' => $dirname, 'type' => 'dir'];
+        // Copy the file.
+        $this->adapterManager->delete($path, $metadata->backingData);
+        $this->getStorageMetadata()->delete($path);
     }
 
     /**
@@ -181,7 +114,7 @@ class FilerAdapter implements FilesystemAdapter
      */
     public function setVisibility(string $path, $visibility): void
     {
-        $this->storageMetadata->setVisibility($path, $visibility);
+        $this->getStorageMetadata()->setVisibility($path, $visibility);
     }
 
     /**
@@ -189,7 +122,7 @@ class FilerAdapter implements FilesystemAdapter
      */
     public function has($path)
     {
-        return $this->storageMetadata->fileExists($path) || $this->hasOriginalDiskFile($path);
+        return $this->getStorageMetadata()->fileExists($path) || $this->hasOriginalDiskFile($path);
     }
 
     /**
@@ -216,7 +149,7 @@ class FilerAdapter implements FilesystemAdapter
     protected function pathMetadata($path): Metadata
     {
         // Get the metadata. Where is this file?
-        $metadata = $this->storageMetadata->getMetadata($path);
+        $metadata = $this->getStorageMetadata()->getMetadata($path);
 
         // We didn't find it in the metadata store. Is there an original disk?
         // If so, let's reach out to the disk and see if there is data there.
@@ -246,7 +179,7 @@ class FilerAdapter implements FilesystemAdapter
     public function listContents(string $directory = '', bool $deep = false): iterable
     {
         // We don't need to reach out to the storage provider because we have it all cached.
-        return $this->storageMetadata->listContents($directory, $deep);
+        return $this->getStorageMetadata()->listContents($path, $deep);
     }
 
     public function getMetadata($path): FileAttributes
@@ -278,7 +211,7 @@ class FilerAdapter implements FilesystemAdapter
 
             $metadata = Metadata::import(current($originalMetadata));
             $metadata->setBackingData($backingData);
-            $this->storageMetadata->record($metadata);
+            $this->getStorageMetadata()->record($metadata);
 
             return $metadata;
         }
