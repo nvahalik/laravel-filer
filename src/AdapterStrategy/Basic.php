@@ -4,6 +4,7 @@ namespace Nvahalik\Filer\AdapterStrategy;
 
 use Illuminate\Filesystem\FilesystemAdapter;
 use League\Flysystem\Config;
+use League\Flysystem\UnableToDeleteFile;
 use League\Flysystem\UnableToReadFile;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
@@ -66,6 +67,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 $originalConfig->setFallback($config);
 
                 $backingAdapter->getAdapter()->writeStream($path, $stream, $originalConfig);
+
                 return BackingData::diskAndPath($diskId, $path);
             } catch (Throwable) {
                 // Something failed, but not due to an existing file...
@@ -87,6 +89,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
                 $originalConfig->setFallback($config);
 
                 $backingAdapter->getAdapter()->write($path, $contents, $originalConfig);
+
                 return BackingData::diskAndPath($diskId, $path);
             } catch (Throwable) {
                 // Something failed, but not due to an existing file...
@@ -114,18 +117,19 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
 
     /**
      * @param  BackingData  $backingData  An array of backing data.
-     * @return resource
      */
-    public function read(BackingData $backingData)
+    public function read(BackingData $backingData): string
     {
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
             try {
                 if ($response = $adapter->getAdapter()->read($this->readAdapterPath($id, $backingData))) {
                     return $response['contents'];
                 }
-            } catch (Throwable $e) {
+            } catch (Throwable) {
             }
         }
+
+        throw new UnableToReadFile;
     }
 
     private function getMatchingReadAdapters(BackingData $backingData): array
@@ -135,17 +139,16 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    public function delete(string $path, $backingData)
+    public function delete(string $path, $backingData): void
     {
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
+            /** @var \Illuminate\Contracts\Filesystem\Filesystem $adapter */
             try {
-                return $adapter->getAdapter()->delete($this->readAdapterPath($id, $backingData));
-            } catch (Throwable $e) {
-                throw new BackingAdapterException("Unable to delete ($path) on disk ($id).");
+                $adapter->getAdapter()->delete($this->readAdapterPath($id, $backingData));
+            } catch (Throwable) {
+                throw new UnableToDeleteFile("Unable to delete ($path) on disk ($id).");
             }
         }
-
-        return true;
     }
 
     private function readAdapterPath(string $id, BackingData $backingData)
@@ -153,17 +156,16 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         return $backingData->getDisk($id)['path'];
     }
 
-    public function copy(BackingData $source, string $destination): ?BackingData
+    public function copy(BackingData $source, string $destination, Config $config): ?BackingData
     {
-        try {
-            $stream = $this->readStream($source);
+        $stream = $this->readStream($source);
 
-            return $this->writeStream($destination, $stream);
-        } catch (Throwable $e) {
-            return null;
-        }
+        return $this->writeStream($destination, $stream, $config);
     }
 
+    /**
+     * @throws \Nvahalik\Filer\Exceptions\BackingAdapterException
+     */
     public function getDisk(string $disk)
     {
         $adapters = $this->getReadAdapters();
