@@ -105,12 +105,9 @@ class FilerAdapter implements FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function rename($originalPath, $newPath)
+    public function writeStream($path, $contents, Config $config): void
     {
-        // We don't really need to do anything. The on-disk doesn't have to change.
-        $this->storageMetadata->move($originalPath, $newPath);
-
-        return true;
+        $this->write($path, $contents, $config, true);
     }
 
     /**
@@ -373,6 +370,7 @@ class FilerAdapter implements FilesystemAdapter
 
     public function move(string $source, string $destination, Config $config): void
     {
-        $this->rename($source, $destination);
+        // We don't really need to do anything. The on-disk doesn't have to change.
+        $this->getStorageMetadata()->rename($source, $destination);
     }
 }
