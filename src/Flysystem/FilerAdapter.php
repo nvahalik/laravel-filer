@@ -49,13 +49,11 @@ class FilerAdapter implements FilesystemAdapter
             : $this->adapterManager->write($path, $contents, $config);
 
         // Write the data out somewhere.
-        if ($backingData) {
-            $metadata = Metadata::generate($path, $contents);
-            $metadata->setBackingData($backingData);
+        $metadata = Metadata::generate($path, $contents);
+        $metadata->setBackingData($backingData);
 
-            // Update the entry to ensure that we've recorded what actually happened with the data.
-            $this->getStorageMetadata()->record($metadata);
-        }
+        // Update the entry to ensure that we've recorded what actually happened with the data.
+        $this->getStorageMetadata()->record($metadata);
     }
 
     /**
