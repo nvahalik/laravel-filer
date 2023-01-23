@@ -4,6 +4,8 @@ namespace Nvahalik\Filer\Flysystem;
 
 use League\Flysystem\Config;
 use League\Flysystem\FileAttributes;
+use League\Flysystem\FilesystemAdapter;
+use League\Flysystem\StorageAttributes;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
@@ -11,7 +13,7 @@ use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Exceptions\BackingAdapterException;
 use Nvahalik\Filer\Metadata;
 
-class FilerAdapter implements \League\Flysystem\FilesystemAdapter
+class FilerAdapter implements FilesystemAdapter
 {
     protected FilerConfig $config;
 
@@ -250,49 +252,19 @@ class FilerAdapter implements \League\Flysystem\FilesystemAdapter
         return $this->storageMetadata->listContents($directory, $deep);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getMetadata($path, $asObject = false)
+    public function getMetadata($path): FileAttributes
     {
-        // Convert our metadata to an array.
+        // Grab our metadata and convert it to a FileAttributes.
         $metadata = $this->pathMetadata($path);
 
-        if ($metadata) {
-            return $asObject ? $metadata : $metadata->toArray();
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getSize($path)
-    {
-        return $this->getMetadata($path);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getMimetype($path)
-    {
-        return $this->getMetadata($path);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTimestamp($path)
-    {
-        return $this->getMetadata($path);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getVisibility($path)
-    {
-        return $this->getMetadata($path);
+        return FileAttributes::fromArray([
+            StorageAttributes::ATTRIBUTE_PATH => $metadata->path,
+            StorageAttributes::ATTRIBUTE_FILE_SIZE => $metadata->size,
+            StorageAttributes::ATTRIBUTE_VISIBILITY => $metadata->visibility,
+            StorageAttributes::ATTRIBUTE_LAST_MODIFIED => $metadata->timestamp,
+            StorageAttributes::ATTRIBUTE_MIME_TYPE => $metadata->mimetype,
+            StorageAttributes::ATTRIBUTE_EXTRA_METADATA => ['__filer_backing_data' => $metadata->backingData->toArray()],
+        ]);
     }
 
     private function migrateFromOriginalDisk(string $path): ?Metadata
