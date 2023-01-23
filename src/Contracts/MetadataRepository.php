@@ -7,7 +7,7 @@ use Nvahalik\Filer\Metadata;
 
 interface MetadataRepository
 {
-    public function setStorageId(string $id): MetadataRepository;
+    public function setStorageId(string $id): static;
 
     /**
      * @return string | false
@@ -37,7 +37,7 @@ interface MetadataRepository
 
     public function directoryExists(string $path): bool;
 
-    public function setVisibility(string $path, string $visbility);
+    public function setVisibility(string $path, string $visibility);
 
     public function record(Metadata $metadata);
 

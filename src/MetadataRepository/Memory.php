@@ -15,7 +15,7 @@ class Memory extends Base implements MetadataRepository
         return $this->valueOrFalse($path, 'size');
     }
 
-    public function setStorageId(string $id): MetadataRepository
+    public function setStorageId(string $id): static
     {
         if (! isset($this->data[$id])) {
             $this->data[$id] = [];
@@ -46,6 +46,7 @@ class Memory extends Base implements MetadataRepository
 
     /**
      * @param $path
+     * @return \Nvahalik\Filer\Metadata|null
      */
     public function getMetadata($path): ?Metadata
     {
