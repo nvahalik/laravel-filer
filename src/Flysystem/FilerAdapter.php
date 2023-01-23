@@ -6,11 +6,13 @@ use League\Flysystem\Config;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToReadFile;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
 use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Metadata;
+use Throwable;
 
 class FilerAdapter implements FilesystemAdapter
 {
@@ -118,15 +120,17 @@ class FilerAdapter implements FilesystemAdapter
 
     /**
      * @inheritDoc
-     *
-     * @todo this is a problem. how can you return an array here? Parent returns a string.
      */
     public function read(string $path): string
     {
         // Get the metadata. Where is this file?
         $metadata = $this->pathMetadata($path);
 
-        return $this->adapterManager->read($metadata->backingData);
+        try {
+            return $this->adapterManager->read($metadata->backingData);
+        } catch (Throwable $original) {
+            throw UnableToReadFile::fromLocation($path, 'No backing store returned file content.', $original);
+        }
     }
 
     /**
@@ -152,14 +156,16 @@ class FilerAdapter implements FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function readStream($path): array
+    public function readStream($path)
     {
         // Get the metadata. Where is this file?
         $metadata = $this->pathMetadata($path);
 
-        $stream = $this->adapterManager->readStream($metadata->backingData);
-
-        return ['type' => 'file', 'path' => $path, 'stream' => $stream];
+        try {
+            return $this->adapterManager->readStream($metadata->backingData);
+        } catch (Throwable $original) {
+            throw UnableToReadFile::fromLocation($path, 'No backing store returned a valid stream.', $original);
+        }
     }
 
     /**
@@ -240,12 +246,11 @@ class FilerAdapter implements FilesystemAdapter
     /**
      * @param  string  $path
      * @return bool
-     * @throws \League\Flysystem\FilesystemException
-     * @todo Is this right?
      */
     public function directoryExists(string $path): bool
     {
-        return $this->fileExists($path);
+        // Directories are fake. So they always technically exist.
+        return true;
     }
 
     public function deleteDirectory(string $path): void
