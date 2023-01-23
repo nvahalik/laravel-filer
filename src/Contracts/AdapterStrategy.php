@@ -25,5 +25,5 @@ interface AdapterStrategy
 
     public function delete(string $path, $backingData);
 
-    public function copy(BackingData $source, string $destination): ?BackingData;
+    public function copy(BackingData $source, string $destination, Config $config): ?BackingData;
 }
