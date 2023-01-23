@@ -10,7 +10,6 @@ use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
 use Nvahalik\Filer\Contracts\MetadataRepository;
-use Nvahalik\Filer\Exceptions\BackingAdapterException;
 use Nvahalik\Filer\Metadata;
 
 class FilerAdapter implements FilesystemAdapter
@@ -67,18 +66,15 @@ class FilerAdapter implements FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function copy(string $originalPath, string $newPath, $config = null): void
+    public function copy(string $source, string $destination, $config = null): void
     {
         // Grab a copy of the metadata and save it with the new path information.
-        $originalMetadata = $this->pathMetadata($originalPath);
-
-        if (! $originalMetadata) {
+        if (! ($originalMetadata = $this->pathMetadata($source))) {
             return;
         }
 
-        try {
-            // Copy the file.
-            $copyBackingData = $this->adapterManager->copy($originalMetadata->backingData, $newPath);
+        // Copy the file.
+        $copyBackingData = $this->adapterManager->copy($originalMetadata->backingData, $destination);
 
         if (! $copyBackingData) {
             return;
@@ -130,9 +126,7 @@ class FilerAdapter implements FilesystemAdapter
         // Get the metadata. Where is this file?
         $metadata = $this->pathMetadata($path);
 
-        if ($contents = $this->adapterManager->read($metadata->backingData)) {
-            return $contents;
-        }
+        return $this->adapterManager->read($metadata->backingData);
     }
 
     /**
@@ -163,15 +157,15 @@ class FilerAdapter implements FilesystemAdapter
         // Get the metadata. Where is this file?
         $metadata = $this->pathMetadata($path);
 
-        if ($stream = $this->adapterManager->readStream($metadata->backingData)) {
-            return ['type' => 'file', 'path' => $path, 'stream' => $stream];
-        }
+        $stream = $this->adapterManager->readStream($metadata->backingData);
+
+        return ['type' => 'file', 'path' => $path, 'stream' => $stream];
     }
 
     /**
      * @inheritDoc
      */
-    public function listContents(string $directory = '', bool $deep = false): iterable
+    public function listContents(string $path = '', bool $deep = false): iterable
     {
         // We don't need to reach out to the storage provider because we have it all cached.
         return $this->getStorageMetadata()->listContents($path, $deep);
@@ -214,7 +208,7 @@ class FilerAdapter implements FilesystemAdapter
         return null;
     }
 
-    private function hasOriginalDiskFile(string $path)
+    private function hasOriginalDiskFile(string $path): bool
     {
         if ($this->config->originalDisks) {
             return $this->adapterManager->has($path);
@@ -226,34 +220,28 @@ class FilerAdapter implements FilesystemAdapter
     public function getTemporaryUrl(string $path, $expiration, array $options = [])
     {
         $data = $this->getBackingAdapter($path);
-        $adapter = $data['adapter'];
 
-        return $adapter->temporaryUrl($path, $expiration, $options);
+        return $data['adapter']->temporaryUrl($path, $expiration, $options);
     }
 
-    public function getBackingAdapter(string $path)
+    public function getBackingAdapter(string $path): array
     {
         $metadata = $this->pathMetadata($path)->backingData->toArray();
 
         $disk = key($metadata);
 
         return [
-            'disk'     => $disk,
-            'adapter'  => $this->adapterManager->getDisk($disk),
+            'disk' => $disk,
+            'adapter' => $this->adapterManager->getDisk($disk),
             'metadata' => current($metadata),
         ];
     }
 
     /**
-     * @todo Is this right?
-     *
      * @param  string  $path
      * @return bool
      * @throws \League\Flysystem\FilesystemException
      * @todo Is this right?
-     *
-     * @param  string  $path
-     * @return bool
      */
     public function directoryExists(string $path): bool
     {
