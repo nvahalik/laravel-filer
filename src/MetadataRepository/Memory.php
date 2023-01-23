@@ -79,8 +79,8 @@ class Memory extends Base implements MetadataRepository
 
         foreach ($matchingFiles as $file) {
             $contents[] = $this->data[$this->storageId] + [
-                    'path' => str_replace($directory, '', $file),
-                ];
+                'path' => str_replace($directory, '', $file),
+            ];
         }
 
         return $contents;
@@ -96,7 +96,7 @@ class Memory extends Base implements MetadataRepository
      *
      * If we have a file stored at a/b/file.txt, then `a` exists. And `a/b` exists.
      */
-    function directoryExists(string $path): bool
+    public function directoryExists(string $path): bool
     {
         $breakdown = array_filter(explode(DIRECTORY_SEPARATOR, $path));
 
