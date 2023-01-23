@@ -115,7 +115,7 @@ class FilerAdapter implements FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function has($path)
+    public function fileExists($path): bool
     {
         return $this->getStorageMetadata()->fileExists($path) || $this->hasOriginalDiskFile($path);
     }
@@ -249,13 +249,7 @@ class FilerAdapter implements FilesystemAdapter
      *
      * @param  string  $path
      * @return bool
-     */
-    public function fileExists(string $path): bool
-    {
-        return $this->has($path);
-    }
-
-    /**
+     * @throws \League\Flysystem\FilesystemException
      * @todo Is this right?
      *
      * @param  string  $path
@@ -263,7 +257,7 @@ class FilerAdapter implements FilesystemAdapter
      */
     public function directoryExists(string $path): bool
     {
-        return $this->has($path);
+        return $this->fileExists($path);
     }
 
     public function deleteDirectory(string $path): void
