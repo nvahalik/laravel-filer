@@ -6,6 +6,7 @@ use League\Flysystem\Config;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\StorageAttributes;
+use League\Flysystem\UnableToCopyFile;
 use League\Flysystem\UnableToReadFile;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
@@ -68,25 +69,25 @@ class FilerAdapter implements FilesystemAdapter
     /**
      * @inheritDoc
      */
-    public function copy(string $source, string $destination, $config = null): void
+    public function copy(string $source, string $destination, Config $config): void
     {
         // Grab a copy of the metadata and save it with the new path information.
         if (! ($originalMetadata = $this->pathMetadata($source))) {
             return;
         }
 
-        // Copy the file.
-        $copyBackingData = $this->adapterManager->copy($originalMetadata->backingData, $destination);
+        try {
+            // Copy the file.
+            $copyBackingData = $this->adapterManager->copy($originalMetadata->backingData, $destination, $config);
 
-        if (! $copyBackingData) {
-            return;
+            $copyMetadata = (clone $originalMetadata)
+                ->setPath($destination)
+                ->setBackingData($copyBackingData);
+
+            $this->getStorageMetadata()->record($copyMetadata);
+        } catch (Throwable $original) {
+            throw UnableToCopyFile::fromLocationTo($source, $destination, $original);
         }
-
-        $copyMetadata = (clone $originalMetadata)
-            ->setPath($destination)
-            ->setBackingData($copyBackingData);
-
-        $this->getStorageMetadata()->record($copyMetadata);
     }
 
     /**
