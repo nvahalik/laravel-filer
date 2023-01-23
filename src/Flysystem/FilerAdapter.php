@@ -46,11 +46,6 @@ class FilerAdapter implements FilesystemAdapter
             ? $this->adapterManager->writeStream($path, $contents, $config)
             : $this->adapterManager->write($path, $contents, $config);
 
-        if ($isStream) {
-            //@todo We believe this is unnecessary
-//            Util::rewindStream($contents);
-        }
-
         // Write the data out somewhere.
         if ($backingData) {
             $metadata = Metadata::generate($path, $contents);
