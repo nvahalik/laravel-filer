@@ -343,12 +343,12 @@ class FilerAdapter implements FilesystemAdapter
 
     public function deleteDirectory(string $path): void
     {
-        $this->deleteDir($path);
+        // We do not support deleting directories.
     }
 
     public function createDirectory(string $path, Config $config): void
     {
-        $this->createDir($path, $config);
+        // This function is intentionally empty. Filer does not support creating directories.
     }
 
     public function visibility(string $path): FileAttributes
