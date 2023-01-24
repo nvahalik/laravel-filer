@@ -31,10 +31,15 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
 
         foreach ($this->originalDisks as $name => $adapter) {
             try {
-                $adapterMetadata = $adapter->getMetadata($path);
-                if (isset($adapterMetadata['etag'])) {
-                    $adapterMetadata['etag'] = rtrim(ltrim($adapterMetadata['etag'], '"'), '"');
-                }
+                /** @var \Illuminate\Filesystem\FilesystemAdapter $adapter */
+                $adapterMetadata = [
+                    'path' => $adapter->path($path),
+                    'mimetype' => $adapter->mimeType($path),
+                    'size' => $adapter->fileSize($path),
+                    'etag' => $adapter->checksum($path),
+                    'timestamp' => $adapter->lastModified($path),
+                    'visibility' => $adapter->visibility($path),
+                ];
                 $metadata[$name] = $adapterMetadata;
             } catch (Throwable) {
                 // Ignore any exceptions, at least for now.
