@@ -64,9 +64,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
          */
         foreach ($this->backingAdapters as $diskId => $backingAdapter) {
             try {
-                $originalConfig = $backingAdapter->getConfig();
-                $originalConfig->setFallback($config);
-
+                $originalConfig = new Config($backingAdapter->getConfig());
                 $backingAdapter->getAdapter()->writeStream($path, $stream, $originalConfig);
 
                 return BackingData::diskAndPath($diskId, $path);
@@ -86,9 +84,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
          */
         foreach ($this->backingAdapters as $diskId => $backingAdapter) {
             try {
-                $originalConfig = $backingAdapter->getConfig();
-                $originalConfig->setFallback($config);
-
+                $originalConfig = new Config($backingAdapter->getConfig());
                 $backingAdapter->getAdapter()->write($path, $contents, $originalConfig);
 
                 return BackingData::diskAndPath($diskId, $path);
@@ -105,9 +101,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
             /** @var \Illuminate\Contracts\Filesystem\Filesystem $adapter */
             try {
-                if ($object = $adapter->getAdapter()->readStream($this->readAdapterPath($id, $backingData))) {
-                    return $object['stream'];
-                }
+                return $adapter->getAdapter()->readStream($this->readAdapterPath($id, $backingData));
             } catch (Throwable) {
                 // We want to allow multiple backing adapters to try it.
             }
@@ -123,9 +117,7 @@ class Basic extends BaseAdapterStrategy implements AdapterStrategy
     {
         foreach ($this->getMatchingReadAdapters($backingData) as $id => $adapter) {
             try {
-                if ($response = $adapter->getAdapter()->read($this->readAdapterPath($id, $backingData))) {
-                    return $response['contents'];
-                }
+                return $adapter->getAdapter()->read($this->readAdapterPath($id, $backingData));
             } catch (Throwable) {
             }
         }
