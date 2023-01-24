@@ -1,6 +1,7 @@
 {
     "name": "nvahalik/laravel-filer",
     "type": "library",
+    "version": "1.0.0",
     "license": "MIT",
     "keywords": ["filesystem","flysystem"],
     "description": "An advanced wrapper over Flysystem for Laravel.",
