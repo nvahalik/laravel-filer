@@ -54,7 +54,7 @@ class FilerServiceProvider extends ServiceProvider
             );
 
             $adapterStrategy = Factory::make(
-                $config['adapter_strategy'],
+                $config['adapter_strategy'] ?? 'basic',
                 $filerConfig->backingDisks,
                 $filerConfig->originalDisks,
                 $config['adapter_strategy_config'] ?? []
