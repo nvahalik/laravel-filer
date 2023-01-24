@@ -143,8 +143,8 @@ class FilerAdapter implements FilesystemAdapter
         // Get the metadata. Where is this file?
         $metadata = $this->getStorageMetadata()->getMetadata($path);
 
-        // We didn't find it in the metadata store. Is there an original disk?
-        // If so, let's reach out to the disk and see if there is data there.
+        // It isn't in the metadata store. Is there an original disk? If so, reach out to the disk and see if there is
+        // data there.
         if (! $metadata && $this->config->originalDisks) {
             $metadata = $this->migrateFromOriginalDisk($path);
         }
@@ -172,13 +172,13 @@ class FilerAdapter implements FilesystemAdapter
      */
     public function listContents(string $path = '', bool $deep = false): iterable
     {
-        // We don't need to reach out to the storage provider because we have it all cached.
+        // Delegate to the metadata storage handler.
         return $this->getStorageMetadata()->listContents($path, $deep);
     }
 
     public function getMetadata($path): FileAttributes
     {
-        // Grab our metadata and convert it to a FileAttributes.
+        // Grab metadata and convert it to a FileAttributes.
         $metadata = $this->pathMetadata($path);
 
         return FileAttributes::fromArray([
@@ -193,7 +193,7 @@ class FilerAdapter implements FilesystemAdapter
 
     private function migrateFromOriginalDisk(string $path): ?Metadata
     {
-        // Did we find it?
+        // Does the file exist on any of the original disks?
         $originalMetadata = $this->adapterManager->getOriginalDiskMetadata($path);
 
         if (count($originalMetadata) > 0) {
@@ -254,7 +254,7 @@ class FilerAdapter implements FilesystemAdapter
 
     public function deleteDirectory(string $path): void
     {
-        // We do not support deleting directories.
+        // Deleting directories is not supported.
     }
 
     public function createDirectory(string $path, Config $config): void
@@ -284,7 +284,7 @@ class FilerAdapter implements FilesystemAdapter
 
     public function move(string $source, string $destination, Config $config): void
     {
-        // We don't really need to do anything. The on-disk doesn't have to change.
+        // The on-disk doesn't have to change. Just rename the file in the metadata storage system.
         $this->getStorageMetadata()->rename($source, $destination);
     }
 }
