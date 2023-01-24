@@ -17,9 +17,15 @@ This project was started to scratch my itch on our growing Laravel site:
 
 # Getting Started
 
-To get started, require the project:
+To get started, require the project.
 
-    composer require nvahalik/laravel-filer
+Laravel 7, 8 (Flysystem V1):
+
+    composer require nvahalik/laravel-filer@^1
+
+Laravel 9 (Flysystem V3):
+
+    composer require nvahalik/laravel-filer@dev-laravel-9
 
 Once that's done, you'll need to edit the filer config file and then update your filesystem configuration.
 
