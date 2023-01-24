@@ -87,8 +87,8 @@ Storage::disk('example')->put('does/not/exist.txt', 'content');
 
 1. The existing metadata repo will be searched.
 2. Then, the single 'original_disks' will be searched.
-3. Then, a write will be attempted on `test:s3-new`.
-4. If that fails, then a write will be attempted on `test:s3-original`.
+3. Then, attempt to write on `test:s3-new`.
+4. If that fails, attempt to write on `test:s3-original`.
 5. If any of the writes succeeds, that adapter's backing information will be returned and the entries metadata updated.
 6. If any of them fails, then false will be returned and the operation will have failed.
 
@@ -107,7 +107,7 @@ php artisan filer:import-s3-metadata example s3output.txt
 
 The importer uses `File::lines()` to load its data, and therefore should not consume a lot of memory. Additionally, it
 will look at the bucket name in the URL which is present in the output and attempt to find that within your existing
-filesystems config.
+filesystem config.
 
 ## Visibility
 
