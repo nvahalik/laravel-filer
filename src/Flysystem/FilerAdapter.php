@@ -8,6 +8,7 @@ use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\StorageAttributes;
 use League\Flysystem\UnableToCopyFile;
 use League\Flysystem\UnableToReadFile;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Nvahalik\Filer\BackingData;
 use Nvahalik\Filer\Config as FilerConfig;
 use Nvahalik\Filer\Contracts\AdapterStrategy;
@@ -48,12 +49,11 @@ class FilerAdapter implements FilesystemAdapter
             ? $this->adapterManager->writeStream($path, $contents, $config)
             : $this->adapterManager->write($path, $contents, $config);
 
-        // Write the data out somewhere.
-        $metadata = Metadata::generate($path, $contents);
-        $metadata->setBackingData($backingData);
-
-        // Update the entry to ensure that we've recorded what actually happened with the data.
-        $this->getStorageMetadata()->record($metadata);
+        // Add to the metadata store.
+        $this->getStorageMetadata()->record(
+            Metadata::generate($path, $contents)
+                ->setBackingData($backingData)
+        );
     }
 
     /**
