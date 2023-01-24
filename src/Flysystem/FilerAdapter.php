@@ -191,7 +191,7 @@ class FilerAdapter implements FilesystemAdapter
         ]);
     }
 
-    private function migrateFromOriginalDisk(string $path): ?Metadata
+    private function migrateFromOriginalDisk(string $path): Metadata
     {
         // Does the file exist on any of the original disks?
         $originalMetadata = $this->adapterManager->getOriginalDiskMetadata($path);
@@ -210,7 +210,7 @@ class FilerAdapter implements FilesystemAdapter
             return $metadata;
         }
 
-        return null;
+        throw new UnableToRetrieveMetadata($path);
     }
 
     private function hasOriginalDiskFile(string $path): bool
