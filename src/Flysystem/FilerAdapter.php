@@ -122,11 +122,10 @@ class FilerAdapter implements FilesystemAdapter
      */
     public function read(string $path): string
     {
-        // Get the metadata. Where is this file?
-        $metadata = $this->pathMetadata($path);
-
+        // Allow the backing adapter to find the file. If the backing adapter throws an exception,
+        // convert it to the correct Exception that the FilesystemAdapter throws.
         try {
-            return $this->adapterManager->read($metadata->backingData);
+            return $this->adapterManager->read($this->pathMetadata($path)->backingData);
         } catch (Throwable $original) {
             throw UnableToReadFile::fromLocation($path, 'No backing store returned file content.', $original);
         }
@@ -147,6 +146,11 @@ class FilerAdapter implements FilesystemAdapter
         // data there.
         if (! $metadata && $this->config->originalDisks) {
             $metadata = $this->migrateFromOriginalDisk($path);
+        }
+
+        // No backing data means that no file was found. Throw an exception.
+        if (! $metadata) {
+            throw new UnableToRetrieveMetadata($path);
         }
 
         return $metadata;
