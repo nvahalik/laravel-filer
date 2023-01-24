@@ -13,13 +13,13 @@ class Json extends Memory
     {
         $this->filename = $filename;
 
+        if (! Storage::has($filename)) {
+            Storage::put($filename, '[]');
+        }
+
+        $data = Storage::get($filename);
+
         try {
-            $data = Storage::get($filename);
-
-            if ($data === null) {
-                return;
-            }
-
             $this->data = json_decode($data, true, 10, JSON_THROW_ON_ERROR);
             foreach ($this->data as $storageId => $contents) {
                 $this->data[$storageId] = array_map(function ($array) {
