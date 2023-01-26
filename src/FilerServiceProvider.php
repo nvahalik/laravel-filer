@@ -35,30 +35,12 @@ class FilerServiceProvider extends ServiceProvider
             __DIR__.'/../config/filer.php' => config_path('filer.php'),
         ], 'filer-config');
 
-        Storage::extend('filer', function (Application $app, $config) {
-            $backing_disks = array_combine($config['backing_disks'], array_map(function ($backing_disk) use ($app) {
-                return $app->make('filesystem')->disk($backing_disk);
-            }, $config['backing_disks']));
+        $this->app->bind('laravel-filer', function (Application $app) {
+            return new Filer($app);
+        });
 
-            $config['original_disks'] = $config['original_disks'] ?? [];
-
-            $original_disks = array_combine($config['original_disks'], array_map(function ($backing_disk) use ($app) {
-                return $app->make('filesystem')->disk($backing_disk);
-            }, $config['original_disks']));
-
-            $filerConfig = new Config(
-                $config['id'],
-                $backing_disks,
-                $config['strategy'] ?? 'priority',
-                $original_disks
-            );
-
-            $adapterStrategy = Factory::make(
-                $config['adapter_strategy'] ?? 'basic',
-                $filerConfig->backingDisks,
-                $filerConfig->originalDisks,
-                $config['adapter_strategy_config'] ?? []
-            );
+        Storage::extend('filer', static function (Application $app, $config) {
+            [$filerConfig, $adapterStrategy] = Filer::getConfigAndAdapter($app, $config);
 
             return new Filesystem(
                 new FilerAdapter(

@@ -18,20 +18,11 @@ use Throwable;
 
 class FilerAdapter implements FilesystemAdapter
 {
-    protected FilerConfig $config;
-
-    protected MetadataRepository $storageMetadata;
-
-    protected AdapterStrategy $adapterManager;
-
     public function __construct(
-        FilerConfig $config,
-        MetadataRepository $storageMetadata,
-        AdapterStrategy $adapterManager
+        protected FilerConfig $config,
+        protected MetadataRepository $storageMetadata,
+        protected AdapterStrategy $adapterManager
     ) {
-        $this->config = $config;
-        $this->storageMetadata = $storageMetadata;
-        $this->adapterManager = $adapterManager;
     }
 
     public function getStorageMetadata(): MetadataRepository
@@ -137,7 +128,7 @@ class FilerAdapter implements FilesystemAdapter
      * @param $path
      * @return Metadata
      */
-    protected function pathMetadata($path): Metadata
+    public function pathMetadata($path): Metadata
     {
         // Get the metadata. Where is this file?
         $metadata = $this->getStorageMetadata()->getMetadata($path);
