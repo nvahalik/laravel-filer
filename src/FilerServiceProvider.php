@@ -42,12 +42,15 @@ class FilerServiceProvider extends ServiceProvider
         Storage::extend('filer', static function (Application $app, $config) {
             [$filerConfig, $adapterStrategy] = Filer::getConfigAndAdapter($app, $config);
 
-            return new Filesystem(
-                new FilerAdapter(
-                    $filerConfig,
-                    $app->make(MetadataRepository::class)->setStorageId($config['id']),
-                    $adapterStrategy
-                ),
+            $adapter = new FilerAdapter(
+                $filerConfig,
+                $app->make(MetadataRepository::class)->setStorageId($config['id']),
+                $adapterStrategy
+            );
+
+            return new FilesystemAdapter(
+                new Filesystem($adapter, $config),
+                $adapter,
                 $config
             );
         });
