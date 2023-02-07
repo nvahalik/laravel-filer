@@ -8,7 +8,7 @@ class MimeType
 {
     public FinfoMimeTypeDetector $detector;
 
-    public static function detectMimeType(string $path, string $contents)
+    public static function detectMimeType(string $path, $contents)
     {
         $detector = new FinfoMimeTypeDetector();
 
