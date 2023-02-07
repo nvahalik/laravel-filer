@@ -14,4 +14,3 @@ class Filer extends \Illuminate\Support\Facades\Facade
         return 'laravel-filer';
     }
 }
-

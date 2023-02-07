@@ -7,7 +7,6 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
-use Nvahalik\Filer\AdapterStrategy\Factory;
 use Nvahalik\Filer\Console\Commands\ImportMetadata;
 use Nvahalik\Filer\Contracts\MetadataRepository;
 use Nvahalik\Filer\Flysystem\FilerAdapter;

@@ -12,8 +12,7 @@ class Filer
 {
     public function __construct(
         readonly private Application $app,
-    )
-    {
+    ) {
     }
 
     public function disk(string $disk): FilerAdapter
