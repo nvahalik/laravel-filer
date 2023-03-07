@@ -58,7 +58,7 @@ class FilerServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->singleton(MetadataRepository::class, function ($app, $config) {
+        $this->app->bind(MetadataRepository::class, function ($app, $config) {
             switch ($app['config']['filer']['metadata']) {
                 case 'json':
                     return new Json($app['config']['filer']['json']['storage_path']);
